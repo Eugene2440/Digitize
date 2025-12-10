@@ -1,0 +1,33 @@
+.mitchell-cotts-logo {
+    background-color: #004d99;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.mitchell-cotts-logo .diamond {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    border: 1.5px solid white;
+}
+
+.mitchell-cotts-logo .diamond.top {
+    top: 25%;
+    background: none;
+    z-index: 1;
+}
+
+.mitchell-cotts-logo .diamond.middle {
+    top: 50%;
+    background-color: white;
+    z-index: 2;
+}
+
+.mitchell-cotts-logo .diamond.bottom {
+    top: 75%;
+    background: none;
+    z-index: 1;
+}
