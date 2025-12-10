@@ -14,7 +14,7 @@ const FitnessEntry = () => {
     const [loading, setLoading] = useState(false);
     const [members, setMembers] = useState([]);
     const [search, setSearch] = useState('');
-    const [selectedMember, setSelectedMember] = useState(null);
+    const [selectedMembers, setSelectedMembers] = useState([]);
     const [session, setSession] = useState('morning');
     const [errorModal, setErrorModal] = useState({ open: false, message: '' });
 
@@ -31,22 +31,42 @@ const FitnessEntry = () => {
         }
     };
 
+    const handleAddMember = (member) => {
+        if (!selectedMembers.find(m => m.id === member.id)) {
+            setSelectedMembers([...selectedMembers, member]);
+        }
+        setSearch('');
+    };
+
+    const handleRemoveMember = (memberId) => {
+        setSelectedMembers(selectedMembers.filter(m => m.id !== memberId));
+    };
+
     const handleCheckIn = async () => {
-        if (!selectedMember) {
-            setErrorModal({ open: true, message: 'Please select a member' });
+        if (selectedMembers.length === 0) {
+            setErrorModal({ open: true, message: 'Please select at least one member' });
             return;
         }
         setLoading(true);
         try {
-            await fitnessService.checkIn({
-                member_id: selectedMember.id,
-                session: session
-            });
-            showToast('Checked in successfully!', 'success');
-            setSelectedMember(null);
-            setSearch('');
+            const results = await Promise.allSettled(
+                selectedMembers.map(member =>
+                    fitnessService.checkIn({
+                        member_id: member.id,
+                        session: session
+                    })
+                )
+            );
+            
+            const failed = results.filter(r => r.status === 'rejected');
+            if (failed.length === 0) {
+                showToast(`${selectedMembers.length} member(s) checked in successfully!`, 'success');
+                setSelectedMembers([]);
+            } else {
+                showToast(`${results.length - failed.length} checked in, ${failed.length} failed`, 'error');
+            }
         } catch (error) {
-            setErrorModal({ open: true, message: error.response?.data?.error || 'Failed to check in' });
+            setErrorModal({ open: true, message: 'Failed to check in members' });
         } finally {
             setLoading(false);
         }
@@ -81,7 +101,7 @@ const FitnessEntry = () => {
                                     <div
                                         key={member.id}
                                         className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
-                                        onClick={() => { setSelectedMember(member); setSearch(''); }}
+                                        onClick={() => handleAddMember(member)}
                                     >
                                         <div className="font-medium">{member.name}</div>
                                         <div className="text-sm text-gray-600">{member.id_number} - {member.company}</div>
@@ -90,17 +110,25 @@ const FitnessEntry = () => {
                             </div>
                         )}
 
-                        {selectedMember && (
-                            <Card>
-                                <CardContent className="p-4">
-                                    <div className="space-y-2">
-                                        <div><strong>Name:</strong> {selectedMember.name}</div>
-                                        <div><strong>ID:</strong> {selectedMember.id_number}</div>
-                                        <div><strong>Phone:</strong> {selectedMember.phone_number}</div>
-                                        <div><strong>Company:</strong> {selectedMember.company}</div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                        {selectedMembers.length > 0 && (
+                            <div>
+                                <Label>Selected Members ({selectedMembers.length})</Label>
+                                <div className={selectedMembers.length > 3 ? "grid grid-cols-2 md:grid-cols-3 gap-2 mt-2" : "space-y-2 mt-2"}>
+                                    {selectedMembers.map(member => (
+                                        <Card key={member.id}>
+                                            <CardContent className={selectedMembers.length > 3 ? "p-2 flex items-center justify-between" : "p-3 flex items-center justify-between"}>
+                                                <div className={selectedMembers.length > 3 ? "text-xs" : ""}>
+                                                    <div className="font-medium truncate">{member.name}</div>
+                                                    <div className={selectedMembers.length > 3 ? "text-xs text-gray-600 truncate" : "text-sm text-gray-600 truncate"}>{member.id_number}</div>
+                                                </div>
+                                                <Button size="sm" variant="ghost" onClick={() => handleRemoveMember(member.id)} className={selectedMembers.length > 3 ? "h-6 w-6 p-0" : ""}>
+                                                    ✕
+                                                </Button>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </div>
                         )}
 
                         <div>
@@ -123,8 +151,8 @@ const FitnessEntry = () => {
                         </div>
 
                         <div className="flex gap-2">
-                            <Button onClick={handleCheckIn} disabled={loading || !selectedMember}>
-                                {loading ? 'Checking In...' : 'Check In'}
+                            <Button onClick={handleCheckIn} disabled={loading || selectedMembers.length === 0}>
+                                {loading ? 'Checking In...' : `Check In ${selectedMembers.length > 0 ? `(${selectedMembers.length})` : ''}`}
                             </Button>
                             <Button type="button" variant="outline" onClick={() => navigate('/fitness')}>
                                 Cancel
