@@ -20,7 +20,7 @@ func main() {
 
 	// CORS configuration
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://10.32.10.153:3001", "http://10.32.10.153:3000"}
+	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://10.32.10.153:3001", "http://10.32.10.153:3000"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	router.Use(cors.New(config))

@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { visitorService } from '@/services/visitor.service';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tooltip } from '@/components/ui/tooltip';
 import { useToast } from '@/components/ui/toast';
 
 const VisitorSignIn = () => {
@@ -88,105 +83,116 @@ const VisitorSignIn = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto">
-            <Card>
-                <CardHeader>
-                    <CardTitle>New Visitor Entry</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="relative" ref={dropdownRef}>
-                            <Label htmlFor="id_number">ID Number</Label>
-                            <Input
-                                id="id_number"
-                                required
-                                value={formData.id_number}
-                                onChange={(e) => handleIdChange(e.target.value)}
-                                autoComplete="off"
-                            />
-                            {showDropdown && (
-                                <div className="absolute z-50 w-full mt-1 max-h-60 overflow-auto rounded-md bg-white/50 backdrop-blur-md border border-gray-200 shadow-lg">
-                                    {filteredVisitors.map((visitor) => (
-                                        <div
-                                            key={visitor.id}
-                                            onClick={() => handleSelectVisitor(visitor)}
-                                            className="px-4 py-2 cursor-pointer hover:bg-white/70 text-black text-sm border-b border-gray-100 last:border-b-0"
-                                        >
-                                            {visitor.id_number} - {visitor.name}
-                                        </div>
-                                    ))}
+        <div className="visitor-form-container">
+            <h1 className="form-title">New Visitor Entry</h1>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group dropdown-container" ref={dropdownRef}>
+                    <label htmlFor="id_number" className="form-label">ID Number</label>
+                    <input
+                        id="id_number"
+                        type="text"
+                        required
+                        className="form-input"
+                        value={formData.id_number}
+                        onChange={(e) => handleIdChange(e.target.value)}
+                        autoComplete="off"
+                    />
+                    {showDropdown && (
+                        <div className="dropdown-list">
+                            {filteredVisitors.map((visitor) => (
+                                <div
+                                    key={visitor.id}
+                                    onClick={() => handleSelectVisitor(visitor)}
+                                    className="dropdown-item"
+                                >
+                                    {visitor.id_number} - {visitor.name}
                                 </div>
-                            )}
+                            ))}
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <Label htmlFor="first_name">First Name</Label>
-                                <Input
-                                    id="first_name"
-                                    required
-                                    value={formData.first_name}
-                                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <Tooltip content="Enter father's name as shown on ID">
-                                    <Label htmlFor="middle_name">Middle Name</Label>
-                                </Tooltip>
-                                <Input
-                                    id="middle_name"
-                                    required
-                                    value={formData.middle_name}
-                                    onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="last_name">Last Name (Optional)</Label>
-                                <Input
-                                    id="last_name"
-                                    value={formData.last_name}
-                                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <Label htmlFor="area">Area of Visit</Label>
-                            <Input
-                                id="area"
-                                required
-                                value={formData.area_of_visit}
-                                onChange={(e) => setFormData({ ...formData, area_of_visit: e.target.value })}
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="purpose">Purpose</Label>
-                            <Input
-                                id="purpose"
-                                required
-                                value={formData.purpose}
-                                onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
-                            />
-                        </div>
-                        <div className="max-w-[120px]">
-                            <Label htmlFor="badge_number">Badge Number</Label>
-                            <Input
-                                id="badge_number"
-                                required
-                                maxLength={3}
-                                value={formData.badge_number}
-                                onChange={(e) => setFormData({ ...formData, badge_number: e.target.value })}
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <Button type="submit" disabled={loading}>
-                                {loading ? 'Creating...' : 'Register Visitor'}
-                            </Button>
-                            <Button type="button" variant="outline" onClick={() => navigate('/visitors')}>
-                                Cancel
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                    )}
+                </div>
+                
+                <div className="form-grid form-grid-3">
+                    <div className="form-group">
+                        <label htmlFor="first_name" className="form-label">First Name</label>
+                        <input
+                            id="first_name"
+                            type="text"
+                            required
+                            className="form-input"
+                            value={formData.first_name}
+                            onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="middle_name" className="form-label">Middle Name</label>
+                        <input
+                            id="middle_name"
+                            type="text"
+                            required
+                            className="form-input"
+                            value={formData.middle_name}
+                            onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="last_name" className="form-label">Last Name (Optional)</label>
+                        <input
+                            id="last_name"
+                            type="text"
+                            className="form-input"
+                            value={formData.last_name}
+                            onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                        />
+                    </div>
+                </div>
+                
+                <div className="form-group">
+                    <label htmlFor="area" className="form-label">Area of Visit</label>
+                    <input
+                        id="area"
+                        type="text"
+                        required
+                        className="form-input"
+                        value={formData.area_of_visit}
+                        onChange={(e) => setFormData({ ...formData, area_of_visit: e.target.value })}
+                    />
+                </div>
+                
+                <div className="form-group">
+                    <label htmlFor="purpose" className="form-label">Purpose</label>
+                    <input
+                        id="purpose"
+                        type="text"
+                        required
+                        className="form-input"
+                        value={formData.purpose}
+                        onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
+                    />
+                </div>
+                
+                <div className="form-group" style={{maxWidth: '120px'}}>
+                    <label htmlFor="badge_number" className="form-label">Badge Number</label>
+                    <input
+                        id="badge_number"
+                        type="text"
+                        required
+                        maxLength={3}
+                        className="form-input"
+                        value={formData.badge_number}
+                        onChange={(e) => setFormData({ ...formData, badge_number: e.target.value })}
+                    />
+                </div>
+                
+                <div className="form-actions">
+                    <button type="submit" disabled={loading} className="btn-primary">
+                        {loading ? 'Creating...' : 'Register Visitor'}
+                    </button>
+                    <button type="button" onClick={() => navigate('/visitors')} className="btn-secondary">
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };

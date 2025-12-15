@@ -2,14 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cargoService } from '@/services/cargo.service';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Package, Trash2, ArrowUpDown, Settings } from 'lucide-react';
 import { ConfirmModal } from '@/components/ui/modal';
-import { format } from 'date-fns';
 
 const CargoList = () => {
     const navigate = useNavigate();
@@ -123,18 +117,18 @@ const CargoList = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="page-header">
                 <div>
-                    <h1 className="text-2xl font-bold">Cargo Management</h1>
-                    <p className="text-muted-foreground">View and manage cargo entries</p>
+                    <h1 className="page-title">Cargo Management</h1>
+                    <p className="page-subtitle">View and manage cargo entries</p>
                 </div>
                 <div className="flex gap-2">
                     {hasRole('admin') && (
                         <div className="relative">
-                            <Button variant="outline" onClick={() => setShowColumnMenu(!showColumnMenu)}>
+                            <button className="action-btn" onClick={() => setShowColumnMenu(!showColumnMenu)}>
                                 <Settings className="h-4 w-4 mr-2" />
                                 Columns
-                            </Button>
+                            </button>
                             {showColumnMenu && (
                                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50" style={{
                                     background: 'rgba(255, 255, 255, 0.95)',
@@ -157,132 +151,129 @@ const CargoList = () => {
                             )}
                         </div>
                     )}
-                    <Button onClick={() => navigate('/cargo/new')}>
-                        <Package className="h-4 w-4 mr-2" />
+                    <button className="cta-button" onClick={() => navigate('/cargo/new')}>
+                        <Package className="h-4 w-4" />
                         New Cargo
-                    </Button>
+                    </button>
                 </div>
             </div>
 
-            <Card>
-                <CardContent className="p-4">
-                    <div className="space-y-3">
-                        <div className="flex gap-4 items-center">
-                            <Input
-                                placeholder="Search by AWB, description, or company..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="max-w-sm"
-                            />
-                            <div className="flex gap-2">
-                                <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
-                                <Button size="sm" variant={filter === 'known' ? 'default' : 'outline'} onClick={() => setFilter('known')}>Known</Button>
-                                <Button size="sm" variant={filter === 'unknown' ? 'default' : 'outline'} onClick={() => setFilter('unknown')}>Unknown</Button>
-                            </div>
-                        </div>
-                        {selectedIds.length > 0 && hasRole('admin') && (
-                            <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
-                                <span className="text-sm">{selectedIds.length} selected</span>
-                                <Button size="sm" variant="destructive" onClick={() => setBulkDeleteModal(true)}>
-                                    <Trash2 className="h-4 w-4 mr-1" />
-                                    Delete Selected
-                                </Button>
-                            </div>
-                        )}
+            <div className="filters-container">
+                <div className="filters-row">
+                    <input
+                        type="text"
+                        placeholder="Search by AWB, description, or company..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="search-input"
+                    />
+                    <div className="filter-buttons">
+                        <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
+                        <button className={`filter-btn ${filter === 'known' ? 'active' : ''}`} onClick={() => setFilter('known')}>Known</button>
+                        <button className={`filter-btn ${filter === 'unknown' ? 'active' : ''}`} onClick={() => setFilter('unknown')}>Unknown</button>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+                {selectedIds.length > 0 && hasRole('admin') && (
+                    <div className="flex items-center gap-2 p-2 bg-blue-50 rounded mt-3">
+                        <span className="text-sm">{selectedIds.length} selected</span>
+                        <button className="action-btn delete" onClick={() => setBulkDeleteModal(true)}>
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete Selected
+                        </button>
+                    </div>
+                )}
+            </div>
 
-            <Card>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
+            <div className="cargo-list-table">
+                <table className="table">
+                    <thead>
+                        <tr>
                             {hasRole('admin') && (
-                                <TableHead className="w-12">
+                                <th className="table-header" style={{width: '48px'}}>
                                     <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === filteredCargo.length && filteredCargo.length > 0} />
-                                </TableHead>
+                                </th>
                             )}
                             {visibleColumns.category && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('category')}>
+                                <th className="table-header sortable" onClick={() => handleSort('category')}>
                                     <div className="flex items-center gap-1">
                                         Category <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
                             {visibleColumns.awb && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('awb_number')}>
+                                <th className="table-header sortable" onClick={() => handleSort('awb_number')}>
                                     <div className="flex items-center gap-1">
                                         AWB No. <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            {visibleColumns.uld && <TableHead>ULD No.</TableHead>}
-                            {visibleColumns.description && <TableHead>Description</TableHead>}
+                            {visibleColumns.uld && <th className="table-header">ULD No.</th>}
+                            {visibleColumns.description && <th className="table-header">Description</th>}
                             {visibleColumns.company && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('company')}>
+                                <th className="table-header sortable" onClick={() => handleSort('company')}>
                                     <div className="flex items-center gap-1">
                                         Company <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            {visibleColumns.driver && <TableHead>Driver</TableHead>}
-                            {visibleColumns.vehicle && <TableHead>Vehicle</TableHead>}
+                            {visibleColumns.driver && <th className="table-header">Driver</th>}
+                            {visibleColumns.vehicle && <th className="table-header">Vehicle</th>}
                             {visibleColumns.time_in && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('time_in')}>
+                                <th className="table-header sortable" onClick={() => handleSort('time_in')}>
                                     <div className="flex items-center gap-1">
                                         Time In <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            {hasRole('admin') && <TableHead>Actions</TableHead>}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                            {hasRole('admin') && <th className="table-header">Actions</th>}
+                        </tr>
+                    </thead>
+                    <tbody>
                         {filteredCargo.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={hasRole('admin') ? 10 : 9} className="text-center py-8 text-muted-foreground">
+                            <tr>
+                                <td colSpan={hasRole('admin') ? 10 : 9} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
                                     No cargo entries found
-                                </TableCell>
-                            </TableRow>
+                                </td>
+                            </tr>
                         ) : (
                             filteredCargo.map((item) => (
-                                <TableRow key={item.id}>
+                                <tr key={item.id} className="table-row">
                                     {hasRole('admin') && (
-                                        <TableCell>
+                                        <td className="table-cell">
                                             <input type="checkbox" checked={selectedIds.includes(item.id)} onChange={() => handleSelectOne(item.id)} />
-                                        </TableCell>
+                                        </td>
                                     )}
                                     {visibleColumns.category && (
-                                        <TableCell>
-                                            <Badge variant={item.category === 'known' ? 'success' : 'warning'}>
+                                        <td className="table-cell">
+                                            <span className={item.category === 'known' ? 'category-badge-known' : 'category-badge-unknown'}>
                                                 {item.category}
-                                            </Badge>
-                                        </TableCell>
+                                            </span>
+                                        </td>
                                     )}
-                                    {visibleColumns.awb && <TableCell className="font-medium">{item.awb_number}</TableCell>}
-                                    {visibleColumns.uld && <TableCell>{item.uld_numbers}</TableCell>}
-                                    {visibleColumns.description && <TableCell>{item.description}</TableCell>}
-                                    {visibleColumns.company && <TableCell>{item.company}</TableCell>}
-                                    {visibleColumns.driver && <TableCell>{item.driver_name}</TableCell>}
-                                    {visibleColumns.vehicle && <TableCell>{item.vehicle_registration}</TableCell>}
+                                    {visibleColumns.awb && <td className="table-cell font-medium">{item.awb_number}</td>}
+                                    {visibleColumns.uld && <td className="table-cell">{item.uld_numbers}</td>}
+                                    {visibleColumns.description && <td className="table-cell">{item.description}</td>}
+                                    {visibleColumns.company && <td className="table-cell">{item.company}</td>}
+                                    {visibleColumns.driver && <td className="table-cell">{item.driver_name}</td>}
+                                    {visibleColumns.vehicle && <td className="table-cell">{item.vehicle_registration}</td>}
                                     {visibleColumns.time_in && (
-                                        <TableCell className="text-xs">
+                                        <td className="table-cell text-xs">
                                             {item.time_in ? new Date(item.time_in).toLocaleString() : '-'}
-                                        </TableCell>
+                                        </td>
                                     )}
                                     {hasRole('admin') && (
-                                        <TableCell>
-                                            <Button size="sm" variant="destructive" onClick={() => handleDelete(item.id)}>
+                                        <td className="table-cell">
+                                            <button className="action-btn delete" onClick={() => handleDelete(item.id)}>
                                                 <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </TableCell>
+                                            </button>
+                                        </td>
                                     )}
-                                </TableRow>
+                                </tr>
                             ))
                         )}
-                    </TableBody>
-                </Table>
-            </Card>
+                    </tbody>
+                </table>
+            </div>
 
             <ConfirmModal
                 isOpen={bulkDeleteModal}

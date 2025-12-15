@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cargoService } from '@/services/cargo.service';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 const CargoEntry = () => {
     const navigate = useNavigate();
@@ -34,110 +30,118 @@ const CargoEntry = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto">
-            <Card>
-                <CardHeader>
-                    <CardTitle>New Cargo Entry</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-black border-b pb-2 text-center">Cargo Identification</h3>
-                            <div>
-                                <Label htmlFor="category">Category</Label>
-                            <select
-                                id="category"
-                                className="w-full border rounded-md p-2"
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                            >
-                                <option value="known">Known</option>
-                                <option value="unknown">Unknown</option>
-                            </select>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <Label htmlFor="awb">AWB Number</Label>
-                                <Input
-                                    id="awb"
-                                    required
-                                    value={formData.awb_number}
-                                    onChange={(e) => setFormData({ ...formData, awb_number: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="uld">ULD Numbers</Label>
-                                <Input
-                                    id="uld"
-                                    required
-                                    value={formData.uld_numbers}
-                                    onChange={(e) => setFormData({ ...formData, uld_numbers: e.target.value })}
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <Label htmlFor="description">Description</Label>
-                            <Input
-                                id="description"
+        <div className="cargo-form-container">
+            <h1 className="form-title">New Cargo Entry</h1>
+            <form onSubmit={handleSubmit}>
+                <div className="form-section">
+                    <h3 className="section-heading">Cargo Identification</h3>
+                    <div className="form-group">
+                        <label htmlFor="category" className="form-label">Category</label>
+                        <select
+                            id="category"
+                            className="form-select"
+                            value={formData.category}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        >
+                            <option value="known">Known</option>
+                            <option value="unknown">Unknown</option>
+                        </select>
+                    </div>
+                    <div className="form-grid form-grid-2">
+                        <div className="form-group">
+                            <label htmlFor="awb" className="form-label">AWB Number</label>
+                            <input
+                                id="awb"
+                                type="text"
                                 required
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            />
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-black border-b pb-2 text-center">Shipper Information</h3>
-                            <div>
-                                <Label htmlFor="company">Company</Label>
-                            <Input
-                                id="company"
-                                value={formData.company}
-                                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                                className="form-input"
+                                value={formData.awb_number}
+                                onChange={(e) => setFormData({ ...formData, awb_number: e.target.value })}
                             />
                         </div>
-                        <div>
-                            <Label htmlFor="driver_name">Driver Name</Label>
-                            <Input
-                                id="driver_name"
+                        <div className="form-group">
+                            <label htmlFor="uld" className="form-label">ULD Numbers</label>
+                            <input
+                                id="uld"
+                                type="text"
                                 required
-                                value={formData.driver_name}
-                                onChange={(e) => setFormData({ ...formData, driver_name: e.target.value })}
+                                className="form-input"
+                                value={formData.uld_numbers}
+                                onChange={(e) => setFormData({ ...formData, uld_numbers: e.target.value })}
                             />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="md:col-span-2">
-                                <Label htmlFor="driver_id">Driver ID</Label>
-                                <Input
-                                    id="driver_id"
-                                    required
-                                    value={formData.driver_id}
-                                    onChange={(e) => setFormData({ ...formData, driver_id: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="vehicle">Vehicle Registration</Label>
-                                <Input
-                                    id="vehicle"
-                                    required
-                                    value={formData.vehicle_registration}
-                                    onChange={(e) => setFormData({ ...formData, vehicle_registration: e.target.value })}
-                                />
-                            </div>
-                        </div>
-                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="description" className="form-label">Description</label>
+                        <input
+                            id="description"
+                            type="text"
+                            required
+                            className="form-input"
+                            value={formData.description}
+                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        />
+                    </div>
+                </div>
 
-                        <div className="flex gap-2 pt-2">
-                            <Button type="submit" disabled={loading}>
-                                {loading ? 'Creating...' : 'Create Entry'}
-                            </Button>
-                            <Button type="button" variant="outline" onClick={() => navigate('/cargo')}>
-                                Cancel
-                            </Button>
+                <div className="form-section">
+                    <h3 className="section-heading">Shipper Information</h3>
+                    <div className="form-group">
+                        <label htmlFor="company" className="form-label">Company</label>
+                        <input
+                            id="company"
+                            type="text"
+                            className="form-input"
+                            value={formData.company}
+                            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="driver_name" className="form-label">Driver Name</label>
+                        <input
+                            id="driver_name"
+                            type="text"
+                            required
+                            className="form-input"
+                            value={formData.driver_name}
+                            onChange={(e) => setFormData({ ...formData, driver_name: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-grid form-grid-driver">
+                        <div className="form-group">
+                            <label htmlFor="driver_id" className="form-label">Driver ID</label>
+                            <input
+                                id="driver_id"
+                                type="text"
+                                required
+                                className="form-input"
+                                value={formData.driver_id}
+                                onChange={(e) => setFormData({ ...formData, driver_id: e.target.value })}
+                            />
                         </div>
-                    </form>
-                </CardContent>
-            </Card>
+                        <div className="form-group">
+                            <label htmlFor="vehicle" className="form-label">Vehicle Registration</label>
+                            <input
+                                id="vehicle"
+                                type="text"
+                                required
+                                className="form-input"
+                                value={formData.vehicle_registration}
+                                onChange={(e) => setFormData({ ...formData, vehicle_registration: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="form-actions">
+                    <button type="submit" disabled={loading} className="btn-primary">
+                        {loading ? 'Creating...' : 'Create Entry'}
+                    </button>
+                    <button type="button" onClick={() => navigate('/cargo')} className="btn-secondary">
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };

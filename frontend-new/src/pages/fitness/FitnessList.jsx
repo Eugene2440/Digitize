@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fitnessService } from '@/services/fitness.service';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dumbbell, Trash2, ArrowUpDown, Settings, FileDown } from 'lucide-react';
 import { Modal, ConfirmModal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
@@ -237,22 +234,22 @@ const FitnessList = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="page-header">
                 <div>
-                    <h1 className="text-2xl font-bold">Fitness Attendance</h1>
-                    <p className="text-muted-foreground">Track gym attendance</p>
+                    <h1 className="page-title">Fitness Attendance</h1>
+                    <p className="page-subtitle">Track gym attendance</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setShowReportModal(true)}>
-                        <FileDown className="h-4 w-4 mr-2" />
+                    <button className="secondary-btn" onClick={() => setShowReportModal(true)}>
+                        <FileDown className="h-4 w-4" />
                         Generate Report
-                    </Button>
+                    </button>
                     {hasRole('admin') && (
                         <div className="relative">
-                            <Button variant="outline" onClick={() => setShowColumnMenu(!showColumnMenu)}>
+                            <button className="action-btn" onClick={() => setShowColumnMenu(!showColumnMenu)}>
                                 <Settings className="h-4 w-4 mr-2" />
                                 Columns
-                            </Button>
+                            </button>
                             {showColumnMenu && (
                                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50" style={{
                                     background: 'rgba(255, 255, 255, 0.95)',
@@ -275,127 +272,124 @@ const FitnessList = () => {
                             )}
                         </div>
                     )}
-                    <Button onClick={() => navigate('/fitness/new')}>
-                        <Dumbbell className="h-4 w-4 mr-2" />
+                    <button className="cta-button" onClick={() => navigate('/fitness/new')}>
+                        <Dumbbell className="h-4 w-4" />
                         Check In
-                    </Button>
+                    </button>
                 </div>
             </div>
 
-            <Card>
-                <CardContent className="p-4">
-                    <div className="space-y-3">
-                        <div className="flex gap-4 items-center">
-                            <Input
-                                placeholder="Search by name or company..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="max-w-sm"
-                            />
-                            <div className="flex gap-2">
-                                <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
-                                <Button size="sm" variant={filter === 'morning' ? 'default' : 'outline'} onClick={() => setFilter('morning')}>Morning</Button>
-                                <Button size="sm" variant={filter === 'afternoon' ? 'default' : 'outline'} onClick={() => setFilter('afternoon')}>Afternoon</Button>
-                                <Button size="sm" variant={filter === 'evening' ? 'default' : 'outline'} onClick={() => setFilter('evening')}>Evening</Button>
-                            </div>
-                        </div>
-                        {selectedIds.length > 0 && hasRole('admin') && (
-                            <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
-                                <span className="text-sm">{selectedIds.length} selected</span>
-                                <Button size="sm" variant="destructive" onClick={() => setBulkDeleteModal(true)}>
-                                    <Trash2 className="h-4 w-4 mr-1" />
-                                    Delete Selected
-                                </Button>
-                            </div>
-                        )}
+            <div className="filters-container">
+                <div className="filters-row">
+                    <input
+                        type="text"
+                        placeholder="Search by name or company..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="search-input"
+                    />
+                    <div className="filter-buttons">
+                        <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
+                        <button className={`filter-btn ${filter === 'morning' ? 'active' : ''}`} onClick={() => setFilter('morning')}>Morning</button>
+                        <button className={`filter-btn ${filter === 'afternoon' ? 'active' : ''}`} onClick={() => setFilter('afternoon')}>Afternoon</button>
+                        <button className={`filter-btn ${filter === 'evening' ? 'active' : ''}`} onClick={() => setFilter('evening')}>Evening</button>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+                {selectedIds.length > 0 && hasRole('admin') && (
+                    <div className="flex items-center gap-2 p-2 bg-blue-50 rounded mt-3">
+                        <span className="text-sm">{selectedIds.length} selected</span>
+                        <button className="action-btn delete" onClick={() => setBulkDeleteModal(true)}>
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete Selected
+                        </button>
+                    </div>
+                )}
+            </div>
 
-            <Card>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
+            <div className="attendance-list-table">
+                <table className="table">
+                    <thead>
+                        <tr>
                             {hasRole('admin') && (
-                                <TableHead className="w-12">
+                                <th className="table-header" style={{width: '48px'}}>
                                     <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === filteredAttendance.length && filteredAttendance.length > 0} />
-                                </TableHead>
+                                </th>
                             )}
                             {visibleColumns.name && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('member.name')}>
+                                <th className="table-header sortable" onClick={() => handleSort('member.name')}>
                                     <div className="flex items-center gap-1">
                                         Name <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            {visibleColumns.company && <TableHead>Company</TableHead>}
+                            {visibleColumns.company && <th className="table-header">Company</th>}
                             {visibleColumns.session && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('session')}>
+                                <th className="table-header sortable" onClick={() => handleSort('session')}>
                                     <div className="flex items-center gap-1">
                                         Session <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            {visibleColumns.date && <TableHead>Date</TableHead>}
+                            {visibleColumns.date && <th className="table-header">Date</th>}
                             {visibleColumns.check_in && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('check_in')}>
+                                <th className="table-header sortable" onClick={() => handleSort('check_in')}>
                                     <div className="flex items-center gap-1">
                                         Check In <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            {hasRole('admin') && <TableHead>Actions</TableHead>}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                            <th className="table-header">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {filteredAttendance.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={hasRole('admin') ? 7 : 6} className="text-center py-8 text-muted-foreground">
+                            <tr>
+                                <td colSpan={hasRole('admin') ? 7 : 6} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
                                     No attendance records found
-                                </TableCell>
-                            </TableRow>
+                                </td>
+                            </tr>
                         ) : (
                             filteredAttendance.map((record) => (
-                                <TableRow key={record.id}>
+                                <tr key={record.id} className="table-row">
                                     {hasRole('admin') && (
-                                        <TableCell>
+                                        <td className="table-cell">
                                             <input type="checkbox" checked={selectedIds.includes(record.id)} onChange={() => handleSelectOne(record.id)} />
-                                        </TableCell>
+                                        </td>
                                     )}
-                                    {visibleColumns.name && <TableCell className="font-medium">{record.member?.name || 'N/A'}</TableCell>}
-                                    {visibleColumns.company && <TableCell>{record.member?.company || 'N/A'}</TableCell>}
+                                    {visibleColumns.name && <td className="table-cell font-medium">{record.member?.name || 'N/A'}</td>}
+                                    {visibleColumns.company && <td className="table-cell">{record.member?.company || 'N/A'}</td>}
                                     {visibleColumns.session && (
-                                        <TableCell>
-                                            <Badge variant={record.session === 'morning' ? 'default' : record.session === 'afternoon' ? 'secondary' : 'outline'}>
+                                        <td className="table-cell">
+                                            <span className={`session-badge-${record.session}`}>
                                                 {record.session}
-                                            </Badge>
-                                        </TableCell>
+                                            </span>
+                                        </td>
                                     )}
-                                    {visibleColumns.date && <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>}
-                                    {visibleColumns.check_in && <TableCell className="text-xs">{new Date(record.check_in).toLocaleString()}</TableCell>}
-                                    <TableCell>
-                                        <div className="flex gap-2">
+                                    {visibleColumns.date && <td className="table-cell">{new Date(record.date).toLocaleDateString()}</td>}
+                                    {visibleColumns.check_in && <td className="table-cell text-xs">{new Date(record.check_in).toLocaleString()}</td>}
+                                    <td className="table-cell">
+                                        <div className="actions-group">
                                             {!record.check_out && (
-                                                <Button size="sm" variant="outline" onClick={() => handleCheckOut(record.id)}>
+                                                <button className="action-btn" onClick={() => handleCheckOut(record.id)}>
                                                     Check Out
-                                                </Button>
+                                                </button>
                                             )}
                                             {record.check_out && (
-                                                <span className="text-xs text-gray-600">{new Date(record.check_out).toLocaleString()}</span>
+                                                <span className="text-xs" style={{color: '#6b7280'}}>{new Date(record.check_out).toLocaleString()}</span>
                                             )}
                                             {hasRole('admin') && (
-                                                <Button size="sm" variant="destructive" onClick={() => setDeleteModal({ open: true, id: record.id })}>
+                                                <button className="action-btn delete" onClick={() => setDeleteModal({ open: true, id: record.id })}>
                                                     <Trash2 className="h-4 w-4" />
-                                                </Button>
+                                                </button>
                                             )}
                                         </div>
-                                    </TableCell>
-                                </TableRow>
+                                    </td>
+                                </tr>
                             ))
                         )}
-                    </TableBody>
-                </Table>
-            </Card>
+                    </tbody>
+                </table>
+            </div>
 
             <ConfirmModal
                 isOpen={deleteModal.open}

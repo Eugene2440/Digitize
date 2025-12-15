@@ -1,23 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Home, UserPlus, Package, ClipboardList, Truck, Users, FileText, Dumbbell, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const { hasRole, hasAnyRole } = useAuth();
 
-    const navLinkClass = ({ isActive }) =>
-        cn(
-            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-            isActive
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-        );
-
     const handleLinkClick = () => {
-        // Close sidebar on mobile after clicking a link
         if (window.innerWidth < 768) {
             onClose?.();
         }
@@ -34,34 +23,35 @@ const Sidebar = ({ isOpen, onClose }) => {
             )}
 
             {/* Sidebar */}
-            <aside className={cn(
-                "fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-card border-r border-border p-4 transition-transform duration-300",
-                "md:translate-x-0",
-                isOpen ? "translate-x-0" : "-translate-x-full"
-            )}>
+            <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
                 {/* Mobile close button */}
-                <div className="flex justify-end md:hidden mb-4">
-                    <Button variant="ghost" size="icon" onClick={onClose}>
+                <div className="flex justify-end md:hidden p-4">
+                    <button onClick={onClose} className="text-white hover:text-mustard">
                         <X className="h-5 w-5" />
-                    </Button>
+                    </button>
                 </div>
 
-                <nav className="space-y-1">
-                    <NavLink to="/" className={navLinkClass} end onClick={handleLinkClick}>
+                {/* Title */}
+                <div className="sidebar-title">
+                    Digital Logbook
+                </div>
+
+                <nav>
+                    <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end onClick={handleLinkClick}>
                         <Home className="h-5 w-5" />
                         Dashboard
                     </NavLink>
 
                     {hasAnyRole(['data_entry', 'admin']) && (
                         <>
-                            <div className="pt-4 pb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            <div className="nav-section">
                                 Entry
                             </div>
-                            <NavLink to="/visitors/new" className={navLinkClass} onClick={handleLinkClick}>
+                            <NavLink to="/visitors/new" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                                 <UserPlus className="h-5 w-5" />
                                 New Visitor
                             </NavLink>
-                            <NavLink to="/cargo/new" className={navLinkClass} onClick={handleLinkClick}>
+                            <NavLink to="/cargo/new" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                                 <Package className="h-5 w-5" />
                                 New Cargo
                             </NavLink>
@@ -70,10 +60,10 @@ const Sidebar = ({ isOpen, onClose }) => {
 
                     {hasAnyRole(['dashboard_visitor', 'admin']) && (
                         <>
-                            <div className="pt-4 pb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            <div className="nav-section">
                                 Visitors
                             </div>
-                            <NavLink to="/visitors" className={navLinkClass} onClick={handleLinkClick}>
+                            <NavLink to="/visitors" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                                 <ClipboardList className="h-5 w-5" />
                                 Visitor List
                             </NavLink>
@@ -82,42 +72,42 @@ const Sidebar = ({ isOpen, onClose }) => {
 
                     {hasAnyRole(['dashboard_cargo', 'admin']) && (
                         <>
-                            <div className="pt-4 pb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            <div className="nav-section">
                                 Cargo
                             </div>
-                            <NavLink to="/cargo" className={navLinkClass} onClick={handleLinkClick}>
+                            <NavLink to="/cargo" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                                 <Truck className="h-5 w-5" />
                                 Cargo List
                             </NavLink>
                         </>
                     )}
 
-                    <div className="pt-4 pb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <div className="nav-section">
                         Fitness
                     </div>
-                    <NavLink to="/fitness/members" className={navLinkClass} onClick={handleLinkClick}>
+                    <NavLink to="/fitness/members" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                         <Users className="h-5 w-5" />
                         Gym Members
                     </NavLink>
-                    <NavLink to="/fitness" className={navLinkClass} onClick={handleLinkClick}>
+                    <NavLink to="/fitness" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                         <Dumbbell className="h-5 w-5" />
                         Attendance
                     </NavLink>
 
-                    <div className="pt-4 pb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <div className="nav-section">
                         Reports
                     </div>
-                    <NavLink to="/reports" className={navLinkClass} onClick={handleLinkClick}>
+                    <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                         <FileText className="h-5 w-5" />
                         Analytics
                     </NavLink>
 
                     {hasRole('admin') && (
                         <>
-                            <div className="pt-4 pb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            <div className="nav-section">
                                 Admin
                             </div>
-                            <NavLink to="/users" className={navLinkClass} onClick={handleLinkClick}>
+                            <NavLink to="/users" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                                 <Users className="h-5 w-5" />
                                 User Management
                             </NavLink>

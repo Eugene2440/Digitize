@@ -2,11 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { visitorService } from '@/services/visitor.service';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { InputModal, ConfirmModal } from '@/components/ui/modal';
 import { UserPlus, LogIn, LogOut, Trash2, ArrowUpDown, Settings } from 'lucide-react';
 
@@ -26,6 +21,7 @@ const VisitorList = () => {
     const [bulkDeleteModal, setBulkDeleteModal] = useState(false);
     const [badgeNumber, setBadgeNumber] = useState('');
     const [showColumnMenu, setShowColumnMenu] = useState(false);
+    const [columnMenuPosition, setColumnMenuPosition] = useState({ top: 0, left: 0 });
     const [visibleColumns, setVisibleColumns] = useState({
         name: true,
         id_number: true,
@@ -40,6 +36,26 @@ const VisitorList = () => {
     useEffect(() => {
         fetchVisitors();
     }, [filter]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (showColumnMenu && !event.target.closest('.column-menu-container')) {
+                setShowColumnMenu(false);
+            }
+        };
+        
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showColumnMenu]);
+
+    const handleColumnMenuToggle = (event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setColumnMenuPosition({
+            top: rect.bottom + 8,
+            left: rect.right - 224 // 14rem = 224px
+        });
+        setShowColumnMenu(!showColumnMenu);
+    };
 
     const fetchVisitors = async () => {
         setLoading(true);
@@ -147,182 +163,180 @@ const VisitorList = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="page-header">
                 <div>
-                    <h1 className="text-2xl font-bold">Visitor Management</h1>
-                    <p className="text-muted-foreground">View and manage visitor entries</p>
+                    <h1 className="page-title">Visitor Management</h1>
+                    <p className="page-subtitle">View and manage visitor entries</p>
                 </div>
                 <div className="flex gap-2">
                     {hasRole('admin') && (
-                        <div className="relative">
-                            <Button variant="outline" onClick={() => setShowColumnMenu(!showColumnMenu)}>
+                        <div className="column-menu-container">
+                            <button className="action-btn" onClick={handleColumnMenuToggle}>
                                 <Settings className="h-4 w-4 mr-2" />
                                 Columns
-                            </Button>
-                            {showColumnMenu && (
-                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50" style={{
-                                    background: 'rgba(255, 255, 255, 0.95)',
-                                    backdropFilter: 'blur(10px)',
-                                    border: '1px solid rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <div className="p-2 space-y-1">
-                                        {Object.keys(visibleColumns).map(col => (
-                                            <label key={col} className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={visibleColumns[col]}
-                                                    onChange={(e) => setVisibleColumns({...visibleColumns, [col]: e.target.checked})}
-                                                />
-                                                <span className="text-sm capitalize">{col.replace('_', ' ')}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                            </button>
                         </div>
                     )}
-                    <Button onClick={() => navigate('/visitors/new')}>
-                        <UserPlus className="h-4 w-4 mr-2" />
+                    <button className="cta-button" onClick={() => navigate('/visitors/new')}>
+                        <UserPlus className="h-4 w-4" />
                         New Visitor
-                    </Button>
+                    </button>
                 </div>
             </div>
 
-            <Card>
-                <CardContent className="p-4">
-                    <div className="space-y-3">
-                        <div className="flex gap-4 items-center">
-                            <Input
-                                placeholder="Search by name or ID..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="max-w-sm"
-                            />
-                            <div className="flex gap-2">
-                                <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
-                                <Button size="sm" variant={filter === 'signed_in' ? 'default' : 'outline'} onClick={() => setFilter('signed_in')}>Signed In</Button>
-                                <Button size="sm" variant={filter === 'signed_out' ? 'default' : 'outline'} onClick={() => setFilter('signed_out')}>Signed Out</Button>
-                            </div>
-                        </div>
-                        {selectedIds.length > 0 && hasRole('admin') && (
-                            <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
-                                <span className="text-sm">{selectedIds.length} selected</span>
-                                <Button size="sm" variant="destructive" onClick={() => setBulkDeleteModal(true)}>
-                                    <Trash2 className="h-4 w-4 mr-1" />
-                                    Delete Selected
-                                </Button>
-                            </div>
-                        )}
+            <div className="filters-container">
+                <div className="filters-row">
+                    <input
+                        type="text"
+                        placeholder="Search by name or ID..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="search-input"
+                    />
+                    <div className="filter-buttons">
+                        <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
+                        <button className={`filter-btn ${filter === 'signed_in' ? 'active' : ''}`} onClick={() => setFilter('signed_in')}>Signed In</button>
+                        <button className={`filter-btn ${filter === 'signed_out' ? 'active' : ''}`} onClick={() => setFilter('signed_out')}>Signed Out</button>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+                {selectedIds.length > 0 && hasRole('admin') && (
+                    <div className="flex items-center gap-2 p-2 bg-blue-50 rounded mt-3">
+                        <span className="text-sm">{selectedIds.length} selected</span>
+                        <button className="action-btn delete" onClick={() => setBulkDeleteModal(true)}>
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete Selected
+                        </button>
+                    </div>
+                )}
+            </div>
 
-            <Card>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
+            <div className="visitor-list-table">
+                <table className="table">
+                    <thead>
+                        <tr>
                             {hasRole('admin') && (
-                                <TableHead className="w-12">
+                                <th className="table-header" style={{width: '48px'}}>
                                     <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === filteredVisitors.length && filteredVisitors.length > 0} />
-                                </TableHead>
+                                </th>
                             )}
                             {visibleColumns.name && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('name')}>
+                                <th className="table-header sortable" onClick={() => handleSort('name')}>
                                     <div className="flex items-center gap-1">
                                         Name <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            {visibleColumns.id_number && <TableHead>ID Number</TableHead>}
-                            {visibleColumns.area && <TableHead>Area</TableHead>}
-                            {visibleColumns.purpose && <TableHead>Purpose</TableHead>}
-                            {visibleColumns.badge && <TableHead>Badge</TableHead>}
+                            {visibleColumns.id_number && <th className="table-header">ID Number</th>}
+                            {visibleColumns.area && <th className="table-header">Area</th>}
+                            {visibleColumns.purpose && <th className="table-header">Purpose</th>}
+                            {visibleColumns.badge && <th className="table-header">Badge</th>}
                             {visibleColumns.status && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('status')}>
+                                <th className="table-header sortable" onClick={() => handleSort('status')}>
                                     <div className="flex items-center gap-1">
                                         Status <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
                             {visibleColumns.time_in && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('sign_in_time')}>
+                                <th className="table-header sortable" onClick={() => handleSort('sign_in_time')}>
                                     <div className="flex items-center gap-1">
                                         Time In <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
                             {visibleColumns.time_out && (
-                                <TableHead className="cursor-pointer" onClick={() => handleSort('sign_out_time')}>
+                                <th className="table-header sortable" onClick={() => handleSort('sign_out_time')}>
                                     <div className="flex items-center gap-1">
                                         Time Out <ArrowUpDown className="h-4 w-4" />
                                     </div>
-                                </TableHead>
+                                </th>
                             )}
-                            <TableHead>Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                            <th className="table-header">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {filteredVisitors.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={hasRole('admin') ? 10 : 9} className="text-center py-8 text-muted-foreground">
+                            <tr>
+                                <td colSpan={hasRole('admin') ? 10 : 9} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
                                     No visitors found
-                                </TableCell>
-                            </TableRow>
+                                </td>
+                            </tr>
                         ) : (
-                            filteredVisitors.map((visitor) => (
-                                <TableRow key={visitor.id}>
+                            filteredVisitors.map((visitor, index) => (
+                                <tr key={visitor.id} className="table-row">
                                     {hasRole('admin') && (
-                                        <TableCell>
+                                        <td className="table-cell">
                                             <input type="checkbox" checked={selectedIds.includes(visitor.id)} onChange={() => handleSelectOne(visitor.id)} />
-                                        </TableCell>
+                                        </td>
                                     )}
-                                    {visibleColumns.name && <TableCell className="font-medium">{visitor.name}</TableCell>}
-                                    {visibleColumns.id_number && <TableCell>{visitor.id_number}</TableCell>}
-                                    {visibleColumns.area && <TableCell>{visitor.area_of_visit}</TableCell>}
-                                    {visibleColumns.purpose && <TableCell>{visitor.purpose}</TableCell>}
-                                    {visibleColumns.badge && <TableCell>{visitor.badge_number || '-'}</TableCell>}
+                                    {visibleColumns.name && <td className="table-cell font-medium">{visitor.name}</td>}
+                                    {visibleColumns.id_number && <td className="table-cell">{visitor.id_number}</td>}
+                                    {visibleColumns.area && <td className="table-cell">{visitor.area_of_visit}</td>}
+                                    {visibleColumns.purpose && <td className="table-cell">{visitor.purpose}</td>}
+                                    {visibleColumns.badge && <td className="table-cell">{visitor.badge_number || '-'}</td>}
                                     {visibleColumns.status && (
-                                        <TableCell>
-                                            <Badge variant={visitor.status === 'signed_in' ? 'success' : 'secondary'}>
+                                        <td className="table-cell">
+                                            <span className={visitor.status === 'signed_in' ? 'status-badge-signed-in' : 'status-badge-signed-out'}>
                                                 {visitor.status?.replace('_', ' ')}
-                                            </Badge>
-                                        </TableCell>
+                                            </span>
+                                        </td>
                                     )}
                                     {visibleColumns.time_in && (
-                                        <TableCell className="text-xs">
+                                        <td className="table-cell text-xs">
                                             {visitor.sign_in_time ? new Date(visitor.sign_in_time).toLocaleString() : '-'}
-                                        </TableCell>
+                                        </td>
                                     )}
                                     {visibleColumns.time_out && (
-                                        <TableCell className="text-xs">
+                                        <td className="table-cell text-xs">
                                             {visitor.sign_out_time ? new Date(visitor.sign_out_time).toLocaleString() : '-'}
-                                        </TableCell>
+                                        </td>
                                     )}
-                                    <TableCell>
-                                        <div className="flex gap-2">
+                                    <td className="table-cell">
+                                        <div className="actions-group">
                                             {visitor.status === 'pending' && (
-                                                <Button size="sm" variant="outline" onClick={() => setSignInModal({ open: true, id: visitor.id })}>
+                                                <button className="action-btn" onClick={() => setSignInModal({ open: true, id: visitor.id })}>
                                                     <LogIn className="h-4 w-4" />
-                                                </Button>
+                                                </button>
                                             )}
                                             {visitor.status === 'signed_in' && (
-                                                <Button size="sm" variant="outline" onClick={() => setSignOutModal({ open: true, id: visitor.id })}>
+                                                <button className="action-btn" onClick={() => setSignOutModal({ open: true, id: visitor.id })}>
                                                     <LogOut className="h-4 w-4" />
-                                                </Button>
+                                                </button>
                                             )}
                                             {hasRole('admin') && (
-                                                <Button size="sm" variant="destructive" onClick={() => setDeleteModal({ open: true, id: visitor.id })}>
+                                                <button className="action-btn delete" onClick={() => setDeleteModal({ open: true, id: visitor.id })}>
                                                     <Trash2 className="h-4 w-4" />
-                                                </Button>
+                                                </button>
                                             )}
                                         </div>
-                                    </TableCell>
-                                </TableRow>
+                                    </td>
+                                </tr>
                             ))
                         )}
-                    </TableBody>
-                </Table>
-            </Card>
+                    </tbody>
+                </table>
+            </div>
+
+            {showColumnMenu && (
+                <div 
+                    className="column-dropdown" 
+                    style={{
+                        top: `${columnMenuPosition.top}px`,
+                        left: `${columnMenuPosition.left}px`
+                    }}
+                >
+                    {Object.keys(visibleColumns).map(col => (
+                        <label key={col} className="column-dropdown-item">
+                            <input
+                                type="checkbox"
+                                checked={visibleColumns[col]}
+                                onChange={(e) => setVisibleColumns({...visibleColumns, [col]: e.target.checked})}
+                            />
+                            <span className="capitalize">{col.replace('_', ' ')}</span>
+                        </label>
+                    ))}
+                </div>
+            )}
 
             <InputModal
                 isOpen={signInModal.open}

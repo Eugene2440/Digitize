@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { fitnessService } from '@/services/fitness.service';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { UserPlus, Trash2, Edit } from 'lucide-react';
 import { Modal, ConfirmModal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
@@ -101,75 +99,74 @@ const MemberManagement = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="page-header">
                 <div>
-                    <h1 className="text-2xl font-bold">Gym Members</h1>
-                    <p className="text-muted-foreground">Manage registered gym members</p>
+                    <h1 className="page-title">Gym Members</h1>
+                    <p className="page-subtitle">Manage registered gym members</p>
                 </div>
                 {hasAnyRole(['data_entry', 'admin']) && (
-                    <Button onClick={() => { setEditingMember(null); setFormData({ name: '', id_number: '', phone_number: '', company: '' }); setShowModal(true); }}>
-                        <UserPlus className="h-4 w-4 mr-2" />
+                    <button className="cta-button" onClick={() => { setEditingMember(null); setFormData({ name: '', id_number: '', phone_number: '', company: '' }); setShowModal(true); }}>
+                        <UserPlus className="h-4 w-4" />
                         Add Member
-                    </Button>
+                    </button>
                 )}
             </div>
 
-            <Card>
-                <CardContent className="p-4">
-                    <Input
-                        placeholder="Search by name, ID, or company..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="max-w-sm"
-                    />
-                </CardContent>
-            </Card>
+            <div className="search-container">
+                <input
+                    type="text"
+                    placeholder="Search by name, ID, or company..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="search-input-wide"
+                />
+            </div>
 
-            <Card>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>ID Number</TableHead>
-                            <TableHead>Phone Number</TableHead>
-                            <TableHead>Company</TableHead>
-                            {hasAnyRole(['data_entry', 'admin']) && <TableHead>Actions</TableHead>}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+            <div className="member-list-table">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th className="table-header">Name</th>
+                            <th className="table-header">ID Number</th>
+                            <th className="table-header">Phone Number</th>
+                            <th className="table-header">Company</th>
+                            {hasAnyRole(['data_entry', 'admin']) && <th className="table-header">Actions</th>}
+                        </tr>
+                    </thead>
+                    <tbody>
                         {filteredMembers.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                            <tr>
+                                <td colSpan={5} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
                                     No members found
-                                </TableCell>
-                            </TableRow>
+                                </td>
+                            </tr>
                         ) : (
                             filteredMembers.map((member) => (
-                                <TableRow key={member.id}>
-                                    <TableCell className="font-medium">{member.name}</TableCell>
-                                    <TableCell>{member.id_number}</TableCell>
-                                    <TableCell>{member.phone_number}</TableCell>
-                                    <TableCell>{member.company}</TableCell>
+                                <tr key={member.id} className="table-row">
+                                    <td className="table-cell font-medium">{member.name}</td>
+                                    <td className="table-cell">{member.id_number}</td>
+                                    <td className="table-cell">{member.phone_number}</td>
+                                    <td className="table-cell">{member.company}</td>
                                     {hasAnyRole(['data_entry', 'admin']) && (
-                                        <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button size="sm" variant="outline" onClick={() => handleEdit(member)}>
+                                        <td className="table-cell">
+                                            <div className="actions-group">
+                                                <button className="action-btn" onClick={() => handleEdit(member)}>
                                                     <Edit className="h-4 w-4" />
-                                                </Button>
+                                                </button>
                                                 {hasRole('admin') && (
-                                                    <Button size="sm" variant="destructive" onClick={() => setDeleteModal({ open: true, id: member.id })}>
+                                                    <button className="action-btn delete" onClick={() => setDeleteModal({ open: true, id: member.id })}>
                                                         <Trash2 className="h-4 w-4" />
-                                                    </Button>
+                                                    </button>
                                                 )}
                                             </div>
-                                        </TableCell>
+                                        </td>
                                     )}
-                                </TableRow>
+                                </tr>
                             ))
                         )}
-                    </TableBody>
-                </Table>
-            </Card>
+                    </tbody>
+                </table>
+            </div>
 
             <Modal
                 isOpen={showModal}

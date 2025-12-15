@@ -6,22 +6,17 @@ export const Modal = ({ isOpen, onClose, title, children, footer }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="modal-overlay">
             <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-            <div className="relative rounded-lg shadow-xl max-w-md w-full mx-4 z-10" style={{
-                background: 'rgba(255, 255, 255, 0.65)',
-                backdropFilter: 'blur(15px)',
-                WebkitBackdropFilter: 'blur(15px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}>
-                <div className="flex items-center justify-between p-4 border-b">
-                    <h2 className="text-lg font-semibold">{title}</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <div className="modal-content">
+                <div className="modal-header">
+                    <h2 className="modal-title">{title}</h2>
+                    <button onClick={onClose} className="modal-close-btn">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
-                <div className="p-4">{children}</div>
-                {footer && <div className="flex gap-2 justify-end p-4 border-t">{footer}</div>}
+                <div className="modal-body">{children}</div>
+                {footer && <div className="modal-footer">{footer}</div>}
             </div>
         </div>
     );
@@ -34,12 +29,12 @@ export const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confi
         title={title}
         footer={
             <>
-                <Button variant="outline" onClick={onClose}>{cancelText}</Button>
-                <Button variant={variant} onClick={onConfirm}>{confirmText}</Button>
+                <button className="btn-secondary" onClick={onClose}>{cancelText}</button>
+                <button className={variant === 'destructive' ? 'action-btn delete' : 'btn-primary'} onClick={onConfirm}>{confirmText}</button>
             </>
         }
     >
-        <p className="text-gray-600">{message}</p>
+        <p>{message}</p>
     </Modal>
 );
 
@@ -50,16 +45,16 @@ export const InputModal = ({ isOpen, onClose, onSubmit, title, label, placeholde
         title={title}
         footer={
             <>
-                <Button variant="outline" onClick={onClose}>Cancel</Button>
-                <Button onClick={onSubmit}>{submitText}</Button>
+                <button className="btn-secondary" onClick={onClose}>Cancel</button>
+                <button className="btn-primary" onClick={onSubmit}>{submitText}</button>
             </>
         }
     >
-        <div className="space-y-2">
-            <label className="text-sm font-medium">{label}</label>
+        <div>
+            <label className="form-label">{label}</label>
             <input
                 type="text"
-                className="w-full border rounded-md p-2"
+                className="form-input"
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}

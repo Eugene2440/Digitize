@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { visitorService } from '@/services/visitor.service';
 import { cargoService } from '@/services/cargo.service';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { FileDown, Calendar } from 'lucide-react';
 
 const Reports = () => {
@@ -104,174 +102,135 @@ const Reports = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="page-header">
                 <div>
-                    <h1 className="text-2xl font-bold">Reports & Analytics</h1>
-                    <p className="text-muted-foreground">Generate and export logbook reports</p>
+                    <h1 className="page-title">Reports & Analytics</h1>
+                    <p className="page-subtitle">Generate and export logbook reports</p>
                 </div>
-                <Button onClick={exportToCSV}>
-                    <FileDown className="h-4 w-4 mr-2" />
+                <button className="cta-button" onClick={exportToCSV}>
+                    <FileDown className="h-4 w-4" />
                     Export CSV
-                </Button>
+                </button>
             </div>
 
-            <Card>
-                <CardContent className="p-4">
-                    <div className="flex gap-2">
-                        <Button 
-                            size="sm" 
-                            variant={period === 'daily' ? 'default' : 'outline'} 
-                            onClick={() => setPeriod('daily')}
-                        >
-                            <Calendar className="h-4 w-4 mr-1" />
-                            Daily
-                        </Button>
-                        <Button 
-                            size="sm" 
-                            variant={period === 'weekly' ? 'default' : 'outline'} 
-                            onClick={() => setPeriod('weekly')}
-                        >
-                            <Calendar className="h-4 w-4 mr-1" />
-                            Weekly
-                        </Button>
-                        <Button 
-                            size="sm" 
-                            variant={period === 'monthly' ? 'default' : 'outline'} 
-                            onClick={() => setPeriod('monthly')}
-                        >
-                            <Calendar className="h-4 w-4 mr-1" />
-                            Monthly
-                        </Button>
+            <div className="time-filter-buttons">
+                <button 
+                    className={`time-filter-btn ${period === 'daily' ? 'active' : ''}`}
+                    onClick={() => setPeriod('daily')}
+                >
+                    <Calendar className="h-4 w-4" />
+                    Daily
+                </button>
+                <button 
+                    className={`time-filter-btn ${period === 'weekly' ? 'active' : ''}`}
+                    onClick={() => setPeriod('weekly')}
+                >
+                    <Calendar className="h-4 w-4" />
+                    Weekly
+                </button>
+                <button 
+                    className={`time-filter-btn ${period === 'monthly' ? 'active' : ''}`}
+                    onClick={() => setPeriod('monthly')}
+                >
+                    <Calendar className="h-4 w-4" />
+                    Monthly
+                </button>
+            </div>
+
+            <div className="reports-grid">
+                <div className="data-card">
+                    <div className="data-card-title">Total Visitors</div>
+                    <div className="data-card-number">{stats.totalVisitors}</div>
+                    <div className="data-card-label">
+                        {period === 'daily' ? 'Today' : period === 'weekly' ? 'Last 7 days' : 'Last 30 days'}
                     </div>
-                </CardContent>
-            </Card>
+                </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">Total Visitors</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold">{stats.totalVisitors}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {period === 'daily' ? 'Today' : period === 'weekly' ? 'Last 7 days' : 'Last 30 days'}
-                        </p>
-                    </CardContent>
-                </Card>
+                <div className="data-card">
+                    <div className="data-card-title">Active Visitors</div>
+                    <div className="data-card-number highlight">{stats.activeVisitors}</div>
+                    <div className="data-card-label">Currently signed in</div>
+                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">Active Visitors</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-green-600">{stats.activeVisitors}</div>
-                        <p className="text-xs text-muted-foreground mt-1">Currently signed in</p>
-                    </CardContent>
-                </Card>
+                <div className="data-card">
+                    <div className="data-card-title">Signed Out</div>
+                    <div className="data-card-number">{stats.signedOutVisitors}</div>
+                    <div className="data-card-label">Completed visits</div>
+                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">Signed Out</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-gray-600">{stats.signedOutVisitors}</div>
-                        <p className="text-xs text-muted-foreground mt-1">Completed visits</p>
-                    </CardContent>
-                </Card>
+                <div className="data-card">
+                    <div className="data-card-title">Total Cargo</div>
+                    <div className="data-card-number">{stats.totalCargo}</div>
+                    <div className="data-card-label">
+                        {period === 'daily' ? 'Today' : period === 'weekly' ? 'Last 7 days' : 'Last 30 days'}
+                    </div>
+                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">Total Cargo</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold">{stats.totalCargo}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {period === 'daily' ? 'Today' : period === 'weekly' ? 'Last 7 days' : 'Last 30 days'}
-                        </p>
-                    </CardContent>
-                </Card>
+                <div className="data-card">
+                    <div className="data-card-title">Known Cargo</div>
+                    <div className="data-card-number">{stats.knownCargo}</div>
+                    <div className="data-card-label">Identified shipments</div>
+                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">Known Cargo</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-blue-600">{stats.knownCargo}</div>
-                        <p className="text-xs text-muted-foreground mt-1">Identified shipments</p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">Unknown Cargo</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-orange-600">{stats.unknownCargo}</div>
-                        <p className="text-xs text-muted-foreground mt-1">Unidentified shipments</p>
-                    </CardContent>
-                </Card>
+                <div className="data-card">
+                    <div className="data-card-title">Unknown Cargo</div>
+                    <div className="data-card-number">{stats.unknownCargo}</div>
+                    <div className="data-card-label">Unidentified shipments</div>
+                </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Visitor Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                                <span className="text-sm">Total Entries</span>
-                                <span className="font-semibold">{stats.totalVisitors}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-green-50 rounded">
-                                <span className="text-sm">Active</span>
-                                <span className="font-semibold text-green-600">{stats.activeVisitors}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                                <span className="text-sm">Signed Out</span>
-                                <span className="font-semibold">{stats.signedOutVisitors}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                                <span className="text-sm">Completion Rate</span>
-                                <span className="font-semibold text-blue-600">
-                                    {stats.totalVisitors > 0 
-                                        ? Math.round((stats.signedOutVisitors / stats.totalVisitors) * 100) 
-                                        : 0}%
-                                </span>
-                            </div>
+            <div className="summary-grid">
+                <div className="summary-card">
+                    <div className="summary-title">Visitor Summary</div>
+                    <div className="summary-list">
+                        <div className="summary-item">
+                            <span className="summary-item-label">Total Entries</span>
+                            <span className="summary-item-value">{stats.totalVisitors}</span>
                         </div>
-                    </CardContent>
-                </Card>
+                        <div className="summary-item">
+                            <span className="summary-item-label">Active</span>
+                            <span className="summary-item-value highlight">{stats.activeVisitors}</span>
+                        </div>
+                        <div className="summary-item">
+                            <span className="summary-item-label">Signed Out</span>
+                            <span className="summary-item-value">{stats.signedOutVisitors}</span>
+                        </div>
+                        <div className="summary-item">
+                            <span className="summary-item-label">Completion Rate</span>
+                            <span className="summary-item-value">
+                                {stats.totalVisitors > 0 
+                                    ? Math.round((stats.signedOutVisitors / stats.totalVisitors) * 100) 
+                                    : 0}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Cargo Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                                <span className="text-sm">Total Entries</span>
-                                <span className="font-semibold">{stats.totalCargo}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                                <span className="text-sm">Known</span>
-                                <span className="font-semibold text-blue-600">{stats.knownCargo}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-orange-50 rounded">
-                                <span className="text-sm">Unknown</span>
-                                <span className="font-semibold text-orange-600">{stats.unknownCargo}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-green-50 rounded">
-                                <span className="text-sm">Known Rate</span>
-                                <span className="font-semibold text-green-600">
-                                    {stats.totalCargo > 0 
-                                        ? Math.round((stats.knownCargo / stats.totalCargo) * 100) 
-                                        : 0}%
-                                </span>
-                            </div>
+                <div className="summary-card">
+                    <div className="summary-title">Cargo Summary</div>
+                    <div className="summary-list">
+                        <div className="summary-item">
+                            <span className="summary-item-label">Total Entries</span>
+                            <span className="summary-item-value">{stats.totalCargo}</span>
                         </div>
-                    </CardContent>
-                </Card>
+                        <div className="summary-item">
+                            <span className="summary-item-label">Known</span>
+                            <span className="summary-item-value">{stats.knownCargo}</span>
+                        </div>
+                        <div className="summary-item">
+                            <span className="summary-item-label">Unknown</span>
+                            <span className="summary-item-value">{stats.unknownCargo}</span>
+                        </div>
+                        <div className="summary-item">
+                            <span className="summary-item-label">Known Rate</span>
+                            <span className="summary-item-value">
+                                {stats.totalCargo > 0 
+                                    ? Math.round((stats.knownCargo / stats.totalCargo) * 100) 
+                                    : 0}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

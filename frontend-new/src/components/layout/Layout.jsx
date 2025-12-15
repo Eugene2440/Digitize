@@ -6,19 +6,12 @@ const Layout = ({ children }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen">
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
             <Navbar onMenuClick={() => setSidebarOpen(true)} />
-            <div className="flex">
-                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-                <main className="flex-1 p-4 md:p-6 w-full md:w-auto" style={{
-                    backgroundImage: 'url(/background.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundAttachment: 'fixed'
-                }}>
-                    {children}
-                </main>
-            </div>
+            <main className="main-content">
+                {children}
+            </main>
         </div>
     );
 };

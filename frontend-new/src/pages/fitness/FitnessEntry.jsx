@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fitnessService } from '@/services/fitness.service';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/toast';
 import { Modal } from '@/components/ui/modal';
 
@@ -78,96 +74,95 @@ const FitnessEntry = () => {
     );
 
     return (
-        <div className="max-w-2xl mx-auto">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Gym Attendance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <div>
-                            <Label htmlFor="search">Search Member</Label>
-                            <Input
-                                id="search"
-                                placeholder="Search by name or ID..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </div>
+        <div className="fitness-form-container">
+            <h1 className="fitness-form-title">Gym Attendance</h1>
+            
+            <div className="form-group">
+                <label htmlFor="search" className="form-label">Search Member</label>
+                <input
+                    id="search"
+                    type="text"
+                    className="form-input"
+                    placeholder="Search by name or ID..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </div>
 
-                        {search && filteredMembers.length > 0 && (
-                            <div className="border rounded-md max-h-48 overflow-y-auto">
-                                {filteredMembers.map(member => (
-                                    <div
-                                        key={member.id}
-                                        className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
-                                        onClick={() => handleAddMember(member)}
-                                    >
-                                        <div className="font-medium">{member.name}</div>
-                                        <div className="text-sm text-gray-600">{member.id_number} - {member.company}</div>
+            {search && filteredMembers.length > 0 && (
+                <div className="member-search-results">
+                    {filteredMembers.map(member => (
+                        <div
+                            key={member.id}
+                            className="member-search-item"
+                            onClick={() => handleAddMember(member)}
+                        >
+                            <div className="member-search-name">{member.name}</div>
+                            <div className="member-search-details">{member.id_number} - {member.company}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {selectedMembers.length > 0 && (
+                <div className="form-group">
+                    <span className="selected-members-label">Selected Members ({selectedMembers.length})</span>
+                    <div className={`selected-members-grid ${selectedMembers.length > 3 ? 'compact' : 'expanded'}`}>
+                        {selectedMembers.map(member => (
+                            <div key={member.id} className={`selected-member-card ${selectedMembers.length > 3 ? 'compact' : ''}`}>
+                                <div className="selected-member-info">
+                                    <div className={`selected-member-name ${selectedMembers.length > 3 ? 'compact' : ''}`}>
+                                        {member.name}
                                     </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {selectedMembers.length > 0 && (
-                            <div>
-                                <Label>Selected Members ({selectedMembers.length})</Label>
-                                <div className={selectedMembers.length > 3 ? "grid grid-cols-2 md:grid-cols-3 gap-2 mt-2" : "space-y-2 mt-2"}>
-                                    {selectedMembers.map(member => (
-                                        <Card key={member.id}>
-                                            <CardContent className={selectedMembers.length > 3 ? "p-2 flex items-center justify-between" : "p-3 flex items-center justify-between"}>
-                                                <div className={selectedMembers.length > 3 ? "text-xs" : ""}>
-                                                    <div className="font-medium truncate">{member.name}</div>
-                                                    <div className={selectedMembers.length > 3 ? "text-xs text-gray-600 truncate" : "text-sm text-gray-600 truncate"}>{member.id_number}</div>
-                                                </div>
-                                                <Button size="sm" variant="ghost" onClick={() => handleRemoveMember(member.id)} className={selectedMembers.length > 3 ? "h-6 w-6 p-0" : ""}>
-                                                    ✕
-                                                </Button>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
+                                    <div className={`selected-member-id ${selectedMembers.length > 3 ? 'compact' : ''}`}>
+                                        {member.id_number}
+                                    </div>
                                 </div>
+                                <button 
+                                    className={`remove-member-btn ${selectedMembers.length > 3 ? 'compact' : ''}`}
+                                    onClick={() => handleRemoveMember(member.id)}
+                                >
+                                    ✕
+                                </button>
                             </div>
-                        )}
-
-                        <div>
-                            <Label htmlFor="session">Session</Label>
-                            <select
-                                id="session"
-                                className="w-full border rounded-md p-2"
-                                style={{
-                                    background: 'rgba(255, 255, 255, 0.10)',
-                                    backdropFilter: 'blur(5px)',
-                                    WebkitBackdropFilter: 'blur(5px)'
-                                }}
-                                value={session}
-                                onChange={(e) => setSession(e.target.value)}
-                            >
-                                <option value="morning">Morning</option>
-                                <option value="afternoon">Afternoon</option>
-                                <option value="evening">Evening</option>
-                            </select>
-                        </div>
-
-                        <div className="flex gap-2">
-                            <Button onClick={handleCheckIn} disabled={loading || selectedMembers.length === 0}>
-                                {loading ? 'Checking In...' : `Check In ${selectedMembers.length > 0 ? `(${selectedMembers.length})` : ''}`}
-                            </Button>
-                            <Button type="button" variant="outline" onClick={() => navigate('/fitness')}>
-                                Cancel
-                            </Button>
-                        </div>
+                        ))}
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            )}
+
+            <div className="form-group">
+                <label htmlFor="session" className="form-label">Session</label>
+                <select
+                    id="session"
+                    className="form-select"
+                    value={session}
+                    onChange={(e) => setSession(e.target.value)}
+                >
+                    <option value="morning">Morning</option>
+                    <option value="afternoon">Afternoon</option>
+                    <option value="evening">Evening</option>
+                </select>
+            </div>
+
+            <div className="form-actions">
+                <button 
+                    className="btn-primary" 
+                    onClick={handleCheckIn} 
+                    disabled={loading || selectedMembers.length === 0}
+                >
+                    {loading ? 'Checking In...' : `Check In ${selectedMembers.length > 0 ? `(${selectedMembers.length})` : ''}`}
+                </button>
+                <button className="btn-secondary" onClick={() => navigate('/fitness')}>
+                    Cancel
+                </button>
+            </div>
 
             <Modal
                 isOpen={errorModal.open}
                 onClose={() => setErrorModal({ open: false, message: '' })}
                 title="Error"
                 footer={
-                    <Button onClick={() => setErrorModal({ open: false, message: '' })}>OK</Button>
+                    <button className="btn-primary" onClick={() => setErrorModal({ open: false, message: '' })}>OK</button>
                 }
             >
                 <p className="text-gray-600">{errorModal.message}</p>
