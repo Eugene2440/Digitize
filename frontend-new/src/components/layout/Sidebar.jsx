@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, UserPlus, Package, ClipboardList, Truck, Users, FileText, Dumbbell, X } from 'lucide-react';
+import { Home, UserPlus, Package, ClipboardList, Truck, Users, FileText, Dumbbell } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const { hasRole, hasAnyRole } = useAuth();
@@ -24,18 +24,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
             {/* Sidebar */}
             <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-                {/* Mobile close button */}
-                <div className="flex justify-end md:hidden p-4">
-                    <button onClick={onClose} className="text-white hover:text-mustard">
-                        <X className="h-5 w-5" />
-                    </button>
-                </div>
-
-                {/* Title */}
-                <div className="sidebar-title">
-                    Digital Logbook
-                </div>
-
+                <div className="sidebar-title">Digital Logbook</div>
                 <nav>
                     <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end onClick={handleLinkClick}>
                         <Home className="h-5 w-5" />
@@ -89,7 +78,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                         <Users className="h-5 w-5" />
                         Gym Members
                     </NavLink>
-                    <NavLink to="/fitness" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
+                    <NavLink to="/fitness" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end onClick={handleLinkClick}>
                         <Dumbbell className="h-5 w-5" />
                         Attendance
                     </NavLink>

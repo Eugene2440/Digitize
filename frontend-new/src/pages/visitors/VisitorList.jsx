@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { visitorService } from '@/services/visitor.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { InputModal, ConfirmModal } from '@/components/ui/modal';
-import { UserPlus, LogIn, LogOut, Trash2, ArrowUpDown, Settings } from 'lucide-react';
+import { UserPlus, LogIn, LogOut, Trash2, ChevronUp, ChevronDown, Settings } from 'lucide-react';
 
 const VisitorList = () => {
     const navigate = useNavigate();
@@ -168,11 +168,11 @@ const VisitorList = () => {
                     <h1 className="page-title">Visitor Management</h1>
                     <p className="page-subtitle">View and manage visitor entries</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     {hasRole('admin') && (
                         <div className="column-menu-container">
-                            <button className="action-btn" onClick={handleColumnMenuToggle}>
-                                <Settings className="h-4 w-4 mr-2" />
+                            <button className="cta-button" style={{background: 'white', color: 'var(--moss)', border: '1px solid var(--moss)'}} onClick={handleColumnMenuToggle}>
+                                <Settings className="h-4 w-4" />
                                 Columns
                             </button>
                         </div>
@@ -222,7 +222,7 @@ const VisitorList = () => {
                             {visibleColumns.name && (
                                 <th className="table-header sortable" onClick={() => handleSort('name')}>
                                     <div className="flex items-center gap-1">
-                                        Name <ArrowUpDown className="h-4 w-4" />
+                                        Name {sortField === 'name' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronDown className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
@@ -233,21 +233,21 @@ const VisitorList = () => {
                             {visibleColumns.status && (
                                 <th className="table-header sortable" onClick={() => handleSort('status')}>
                                     <div className="flex items-center gap-1">
-                                        Status <ArrowUpDown className="h-4 w-4" />
+                                        Status {sortField === 'status' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronDown className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
                             {visibleColumns.time_in && (
                                 <th className="table-header sortable" onClick={() => handleSort('sign_in_time')}>
                                     <div className="flex items-center gap-1">
-                                        Time In <ArrowUpDown className="h-4 w-4" />
+                                        Time In {sortField === 'sign_in_time' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronDown className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
                             {visibleColumns.time_out && (
                                 <th className="table-header sortable" onClick={() => handleSort('sign_out_time')}>
                                     <div className="flex items-center gap-1">
-                                        Time Out <ArrowUpDown className="h-4 w-4" />
+                                        Time Out {sortField === 'sign_out_time' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronDown className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}

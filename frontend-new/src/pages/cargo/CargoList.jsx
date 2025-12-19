@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cargoService } from '@/services/cargo.service';
 import { useAuth } from '@/contexts/AuthContext';
-import { Package, Trash2, ArrowUpDown, Settings } from 'lucide-react';
+import { Package, Trash2, ChevronUp, ChevronDown, Settings } from 'lucide-react';
 import { ConfirmModal } from '@/components/ui/modal';
 
 const CargoList = () => {
@@ -196,14 +196,14 @@ const CargoList = () => {
                             {visibleColumns.category && (
                                 <th className="table-header sortable" onClick={() => handleSort('category')}>
                                     <div className="flex items-center gap-1">
-                                        Category <ArrowUpDown className="h-4 w-4" />
+                                        Category {sortField === 'category' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronUp className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
                             {visibleColumns.awb && (
                                 <th className="table-header sortable" onClick={() => handleSort('awb_number')}>
                                     <div className="flex items-center gap-1">
-                                        AWB No. <ArrowUpDown className="h-4 w-4" />
+                                        AWB No. {sortField === 'awb_number' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronUp className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
@@ -212,7 +212,7 @@ const CargoList = () => {
                             {visibleColumns.company && (
                                 <th className="table-header sortable" onClick={() => handleSort('company')}>
                                     <div className="flex items-center gap-1">
-                                        Company <ArrowUpDown className="h-4 w-4" />
+                                        Company {sortField === 'company' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronUp className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
@@ -221,7 +221,7 @@ const CargoList = () => {
                             {visibleColumns.time_in && (
                                 <th className="table-header sortable" onClick={() => handleSort('time_in')}>
                                     <div className="flex items-center gap-1">
-                                        Time In <ArrowUpDown className="h-4 w-4" />
+                                        Time In {sortField === 'time_in' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronUp className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}

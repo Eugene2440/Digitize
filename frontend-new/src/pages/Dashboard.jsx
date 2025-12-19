@@ -114,24 +114,24 @@ const Dashboard = () => {
                             <thead>
                                 <tr>
                                     <th className="table-header text-left">Name</th>
-                                    <th className="table-header text-left hidden sm:table-cell">ID Number</th>
-                                    <th className="table-header text-left hidden md:table-cell">Purpose</th>
+                                    <th className="table-header text-left">ID Number</th>
+                                    <th className="table-header text-left">Purpose</th>
                                     <th className="table-header text-left">Status</th>
-                                    <th className="table-header text-left hidden lg:table-cell">Sign In</th>
+                                    <th className="table-header text-left">Sign In</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {stats.recentVisitors.map(visitor => (
                                     <tr key={visitor.id}>
                                         <td className="table-cell font-medium">{visitor.name}</td>
-                                        <td className="table-cell hidden sm:table-cell">{visitor.id_number}</td>
-                                        <td className="table-cell hidden md:table-cell">{visitor.purpose}</td>
+                                        <td className="table-cell">{visitor.id_number}</td>
+                                        <td className="table-cell">{visitor.purpose}</td>
                                         <td className="table-cell">
                                             <span className={`status-badge ${visitor.status !== 'signed_in' ? 'inactive' : ''}`}>
                                                 {visitor.status?.replace('_', ' ')}
                                             </span>
                                         </td>
-                                        <td className="table-cell hidden lg:table-cell text-sm">
+                                        <td className="table-cell text-xs">
                                             {new Date(visitor.sign_in_time).toLocaleString()}
                                         </td>
                                     </tr>

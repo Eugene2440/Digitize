@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import MitchellCottsLogo from '@/components/MitchellCottsLogo';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -31,58 +26,155 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
-            <Card className="w-full max-w-md shadow-xl">
-                <CardHeader className="text-center space-y-4">
-                    <div className="flex justify-center">
-                        <MitchellCottsLogo size={64} />
-                    </div>
-                    <CardTitle className="text-2xl font-bold">Digital Logbook</CardTitle>
-                    <CardDescription>Welcome back! Please login to your account.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {error && (
-                            <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
-                                {error}
-                            </div>
-                        )}
+        <div style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#F0EEADC',
+            padding: '1rem'
+        }}>
+            <div style={{
+                width: '100%',
+                maxWidth: '400px',
+                backgroundColor: 'white',
+                borderRadius: '8px',
+                padding: '2rem',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
+            }}>
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <h1 style={{
+                        fontSize: '1.875rem',
+                        fontWeight: '700',
+                        color: '#576238',
+                        marginBottom: '0.5rem'
+                    }}>Digital Logbook</h1>
+                    <p style={{
+                        fontSize: '0.875rem',
+                        color: '#6b7280'
+                    }}>Welcome back!</p>
+                </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="username">Username</Label>
-                            <Input
-                                id="username"
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Enter your username"
-                                required
-                                autoFocus
-                            />
+                <form onSubmit={handleSubmit}>
+                    {error && (
+                        <div style={{
+                            backgroundColor: '#fee2e2',
+                            color: '#dc2626',
+                            fontSize: '0.875rem',
+                            padding: '0.75rem',
+                            borderRadius: '6px',
+                            marginBottom: '1rem'
+                        }}>
+                            {error}
                         </div>
+                    )}
 
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter your password"
-                                required
-                            />
-                        </div>
-
-                        <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? 'Logging in...' : 'Login'}
-                        </Button>
-                    </form>
-
-                    <div className="mt-6 text-center text-sm text-muted-foreground">
-                        <p><strong>Default Admin:</strong> username: <code className="bg-muted px-1 rounded">admin</code>, password: <code className="bg-muted px-1 rounded">admin123</code></p>
+                    <div style={{ marginBottom: '1.25rem' }}>
+                        <label htmlFor="username" style={{
+                            display: 'block',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#576238',
+                            marginBottom: '0.5rem'
+                        }}>Username</label>
+                        <input
+                            id="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter your username"
+                            required
+                            autoFocus
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '6px',
+                                fontSize: '1rem',
+                                fontFamily: 'inherit',
+                                transition: 'border-color 0.2s, box-shadow 0.2s'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.outline = 'none';
+                                e.target.style.borderColor = '#576238';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#e5e7eb';
+                                e.target.style.boxShadow = 'none';
+                            }}
+                        />
                     </div>
-                </CardContent>
-            </Card>
+
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <label htmlFor="password" style={{
+                            display: 'block',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#576238',
+                            marginBottom: '0.5rem'
+                        }}>Password</label>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            required
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '6px',
+                                fontSize: '1rem',
+                                fontFamily: 'inherit',
+                                transition: 'border-color 0.2s, box-shadow 0.2s'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.outline = 'none';
+                                e.target.style.borderColor = '#576238';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#e5e7eb';
+                                e.target.style.boxShadow = 'none';
+                            }}
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            backgroundColor: '#FFD95D',
+                            color: '#576238',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            fontFamily: 'inherit',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            transition: 'background-color 0.2s',
+                            opacity: loading ? 0.7 : 1
+                        }}
+                        onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = '#e6c54a')}
+                        onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = '#FFD95D')}
+                    >
+                        {loading ? 'Logging in...' : 'Login'}
+                    </button>
+                </form>
+
+                <div style={{
+                    marginTop: '1.5rem',
+                    textAlign: 'center',
+                    fontSize: '0.75rem',
+                    color: '#9ca3af'
+                }}>
+                    <p>Default Admin: <strong>admin</strong> / <strong>admin123</strong></p>
+                </div>
+            </div>
         </div>
     );
 };

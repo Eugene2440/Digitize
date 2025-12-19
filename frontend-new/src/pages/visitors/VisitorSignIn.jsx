@@ -86,32 +86,6 @@ const VisitorSignIn = () => {
         <div className="visitor-form-container">
             <h1 className="form-title">New Visitor Entry</h1>
             <form onSubmit={handleSubmit}>
-                <div className="form-group dropdown-container" ref={dropdownRef}>
-                    <label htmlFor="id_number" className="form-label">ID Number</label>
-                    <input
-                        id="id_number"
-                        type="text"
-                        required
-                        className="form-input"
-                        value={formData.id_number}
-                        onChange={(e) => handleIdChange(e.target.value)}
-                        autoComplete="off"
-                    />
-                    {showDropdown && (
-                        <div className="dropdown-list">
-                            {filteredVisitors.map((visitor) => (
-                                <div
-                                    key={visitor.id}
-                                    onClick={() => handleSelectVisitor(visitor)}
-                                    className="dropdown-item"
-                                >
-                                    {visitor.id_number} - {visitor.name}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                
                 <div className="form-grid form-grid-3">
                     <div className="form-group">
                         <label htmlFor="first_name" className="form-label">First Name</label>
@@ -147,31 +121,58 @@ const VisitorSignIn = () => {
                     </div>
                 </div>
                 
-                <div className="form-group">
-                    <label htmlFor="area" className="form-label">Area of Visit</label>
+                <div className="form-group dropdown-container" ref={dropdownRef}>
+                    <label htmlFor="id_number" className="form-label">ID Number</label>
                     <input
-                        id="area"
+                        id="id_number"
                         type="text"
                         required
                         className="form-input"
-                        value={formData.area_of_visit}
-                        onChange={(e) => setFormData({ ...formData, area_of_visit: e.target.value })}
+                        value={formData.id_number}
+                        onChange={(e) => handleIdChange(e.target.value)}
+                        autoComplete="off"
                     />
+                    {showDropdown && (
+                        <div className="dropdown-list">
+                            {filteredVisitors.map((visitor) => (
+                                <div
+                                    key={visitor.id}
+                                    onClick={() => handleSelectVisitor(visitor)}
+                                    className="dropdown-item"
+                                >
+                                    {visitor.id_number} - {visitor.name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                
+                <div className="form-grid form-grid-2">
+                    <div className="form-group">
+                        <label htmlFor="area" className="form-label">Area of Visit</label>
+                        <input
+                            id="area"
+                            type="text"
+                            required
+                            className="form-input"
+                            value={formData.area_of_visit}
+                            onChange={(e) => setFormData({ ...formData, area_of_visit: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="purpose" className="form-label">Purpose</label>
+                        <input
+                            id="purpose"
+                            type="text"
+                            required
+                            className="form-input"
+                            value={formData.purpose}
+                            onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
+                        />
+                    </div>
                 </div>
                 
                 <div className="form-group">
-                    <label htmlFor="purpose" className="form-label">Purpose</label>
-                    <input
-                        id="purpose"
-                        type="text"
-                        required
-                        className="form-input"
-                        value={formData.purpose}
-                        onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
-                    />
-                </div>
-                
-                <div className="form-group" style={{maxWidth: '120px'}}>
                     <label htmlFor="badge_number" className="form-label">Badge Number</label>
                     <input
                         id="badge_number"

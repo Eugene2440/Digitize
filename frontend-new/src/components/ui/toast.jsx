@@ -17,24 +17,19 @@ export const ToastProvider = ({ children }) => {
     return (
         <ToastContext.Provider value={{ showToast }}>
             {children}
-            <div className="fixed top-4 right-4 z-50 space-y-2">
+            <div className="toast-container">
                 {toasts.map(toast => (
                     <div
                         key={toast.id}
-                        className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg min-w-[300px] animate-in slide-in-from-top"
-                        style={{
-                            background: toast.type === 'success' ? 'rgba(34, 197, 94, 0.95)' : 'rgba(239, 68, 68, 0.95)',
-                            backdropFilter: 'blur(10px)',
-                            color: 'white'
-                        }}
+                        className={`toast toast-${toast.type}`}
                     >
                         {toast.type === 'success' ? (
                             <CheckCircle className="h-5 w-5" />
                         ) : (
                             <AlertCircle className="h-5 w-5" />
                         )}
-                        <span className="flex-1">{toast.message}</span>
-                        <button onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}>
+                        <span className="toast-message">{toast.message}</span>
+                        <button className="toast-close" onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}>
                             <X className="h-4 w-4" />
                         </button>
                     </div>

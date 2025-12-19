@@ -4,7 +4,7 @@ import { fitnessService } from '@/services/fitness.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dumbbell, Trash2, ArrowUpDown, Settings, FileDown } from 'lucide-react';
+import { Dumbbell, Trash2, ChevronUp, ChevronDown, Settings, FileDown } from 'lucide-react';
 import { Modal, ConfirmModal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
 import { Label } from '@/components/ui/label';
@@ -239,7 +239,7 @@ const FitnessList = () => {
                     <h1 className="page-title">Fitness Attendance</h1>
                     <p className="page-subtitle">Track gym attendance</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     <button className="secondary-btn" onClick={() => setShowReportModal(true)}>
                         <FileDown className="h-4 w-4" />
                         Generate Report
@@ -318,7 +318,7 @@ const FitnessList = () => {
                             {visibleColumns.name && (
                                 <th className="table-header sortable" onClick={() => handleSort('member.name')}>
                                     <div className="flex items-center gap-1">
-                                        Name <ArrowUpDown className="h-4 w-4" />
+                                        Name {sortField === 'member.name' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronUp className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
@@ -326,7 +326,7 @@ const FitnessList = () => {
                             {visibleColumns.session && (
                                 <th className="table-header sortable" onClick={() => handleSort('session')}>
                                     <div className="flex items-center gap-1">
-                                        Session <ArrowUpDown className="h-4 w-4" />
+                                        Session {sortField === 'session' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronUp className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}
@@ -334,7 +334,7 @@ const FitnessList = () => {
                             {visibleColumns.check_in && (
                                 <th className="table-header sortable" onClick={() => handleSort('check_in')}>
                                     <div className="flex items-center gap-1">
-                                        Check In <ArrowUpDown className="h-4 w-4" />
+                                        Check In {sortField === 'check_in' ? (sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ChevronUp className="h-4 w-4 opacity-30" />}
                                     </div>
                                 </th>
                             )}

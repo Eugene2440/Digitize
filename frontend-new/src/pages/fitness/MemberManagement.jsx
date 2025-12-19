@@ -174,46 +174,182 @@ const MemberManagement = () => {
                 title={editingMember ? 'Edit Member' : 'Add New Member'}
                 footer={
                     <>
-                        <Button variant="outline" onClick={() => { setShowModal(false); setEditingMember(null); }}>Cancel</Button>
-                        <Button onClick={handleSubmit}>Save</Button>
+                        <button 
+                            onClick={() => { setShowModal(false); setEditingMember(null); }}
+                            style={{
+                                padding: '0.625rem 1.25rem',
+                                backgroundColor: 'white',
+                                color: '#576238',
+                                border: '1px solid #576238',
+                                borderRadius: '6px',
+                                fontSize: '0.875rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.2s',
+                                fontFamily: 'inherit'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(87, 98, 56, 0.05)'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            onClick={handleSubmit}
+                            style={{
+                                padding: '0.625rem 1.5rem',
+                                backgroundColor: '#FFD95D',
+                                color: '#576238',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontSize: '0.875rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.2s',
+                                fontFamily: 'inherit'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#e6c54a'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#FFD95D'}
+                        >
+                            Save
+                        </button>
                     </>
                 }
             >
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     <div>
-                        <Label htmlFor="name">Name</Label>
-                        <Input
+                        <label htmlFor="name" style={{
+                            display: 'block',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#576238',
+                            marginBottom: '0.5rem'
+                        }}>Name</label>
+                        <input
                             id="name"
+                            type="text"
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '6px',
+                                fontSize: '0.875rem',
+                                fontFamily: 'inherit',
+                                transition: 'border-color 0.2s, box-shadow 0.2s'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.outline = 'none';
+                                e.target.style.borderColor = '#576238';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#e5e7eb';
+                                e.target.style.boxShadow = 'none';
+                            }}
                         />
                     </div>
                     <div>
-                        <Label htmlFor="id_number">ID Number</Label>
-                        <Input
+                        <label htmlFor="id_number" style={{
+                            display: 'block',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#576238',
+                            marginBottom: '0.5rem'
+                        }}>ID Number</label>
+                        <input
                             id="id_number"
+                            type="text"
                             required
                             value={formData.id_number}
                             onChange={(e) => setFormData({ ...formData, id_number: e.target.value })}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '6px',
+                                fontSize: '0.875rem',
+                                fontFamily: 'inherit',
+                                transition: 'border-color 0.2s, box-shadow 0.2s'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.outline = 'none';
+                                e.target.style.borderColor = '#576238';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#e5e7eb';
+                                e.target.style.boxShadow = 'none';
+                            }}
                         />
                     </div>
                     <div>
-                        <Label htmlFor="phone_number">Phone Number</Label>
-                        <Input
+                        <label htmlFor="phone_number" style={{
+                            display: 'block',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#576238',
+                            marginBottom: '0.5rem'
+                        }}>Phone Number</label>
+                        <input
                             id="phone_number"
+                            type="text"
                             required
                             value={formData.phone_number}
                             onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '6px',
+                                fontSize: '0.875rem',
+                                fontFamily: 'inherit',
+                                transition: 'border-color 0.2s, box-shadow 0.2s'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.outline = 'none';
+                                e.target.style.borderColor = '#576238';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#e5e7eb';
+                                e.target.style.boxShadow = 'none';
+                            }}
                         />
                     </div>
                     <div>
-                        <Label htmlFor="company">Company</Label>
-                        <Input
+                        <label htmlFor="company" style={{
+                            display: 'block',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#576238',
+                            marginBottom: '0.5rem'
+                        }}>Company</label>
+                        <input
                             id="company"
+                            type="text"
                             required
                             value={formData.company}
                             onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '6px',
+                                fontSize: '0.875rem',
+                                fontFamily: 'inherit',
+                                transition: 'border-color 0.2s, box-shadow 0.2s'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.outline = 'none';
+                                e.target.style.borderColor = '#576238';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#e5e7eb';
+                                e.target.style.boxShadow = 'none';
+                            }}
                         />
                     </div>
                 </form>

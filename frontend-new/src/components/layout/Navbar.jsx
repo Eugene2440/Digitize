@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, Menu } from 'lucide-react';
 
-const Navbar = ({ onMenuClick }) => {
+const Navbar = ({ onMenuClick, sidebarOpen }) => {
     const { user, logout } = useAuth();
 
     const getInitials = (name) => {
@@ -11,8 +11,8 @@ const Navbar = ({ onMenuClick }) => {
 
     return (
         <nav className="header">
-            {/* Mobile menu button */}
-            <button className="mobile-menu-btn" onClick={onMenuClick}>
+            {/* Sidebar toggle button */}
+            <button className="sidebar-toggle-btn" onClick={onMenuClick}>
                 <Menu className="h-5 w-5" />
             </button>
 
