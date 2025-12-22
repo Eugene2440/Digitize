@@ -31,10 +31,12 @@ const CargoEntry = () => {
 
     return (
         <div className="cargo-form-container">
-            <h1 className="form-title">New Cargo Entry</h1>
+            <h1 className="form-title">New Cargo</h1>
+            <p className="form-subtitle">Register a new cargo entry</p>
+
             <form onSubmit={handleSubmit}>
                 <div className="form-section">
-                    <h3 className="section-heading">Cargo Identification</h3>
+                    <h3 className="form-section-title">Cargo Details</h3>
                     <div className="form-grid form-grid-2">
                         <div className="form-group">
                             <label htmlFor="category" className="form-label">Category</label>
@@ -55,6 +57,7 @@ const CargoEntry = () => {
                                 type="text"
                                 required
                                 className="form-input"
+                                placeholder="Enter AWB number"
                                 value={formData.awb_number}
                                 onChange={(e) => setFormData({ ...formData, awb_number: e.target.value })}
                             />
@@ -68,6 +71,7 @@ const CargoEntry = () => {
                                 type="text"
                                 required
                                 className="form-input"
+                                placeholder="Enter ULD numbers"
                                 value={formData.uld_numbers}
                                 onChange={(e) => setFormData({ ...formData, uld_numbers: e.target.value })}
                             />
@@ -79,6 +83,7 @@ const CargoEntry = () => {
                                 type="text"
                                 required
                                 className="form-input"
+                                placeholder="Enter description"
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             />
@@ -87,7 +92,7 @@ const CargoEntry = () => {
                 </div>
 
                 <div className="form-section">
-                    <h3 className="section-heading">Shipper Information</h3>
+                    <h3 className="form-section-title">Shipper Information</h3>
                     <div className="form-grid form-grid-2">
                         <div className="form-group">
                             <label htmlFor="company" className="form-label">Company</label>
@@ -95,6 +100,7 @@ const CargoEntry = () => {
                                 id="company"
                                 type="text"
                                 className="form-input"
+                                placeholder="Enter company name"
                                 value={formData.company}
                                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                             />
@@ -106,6 +112,7 @@ const CargoEntry = () => {
                                 type="text"
                                 required
                                 className="form-input"
+                                placeholder="Enter vehicle registration"
                                 value={formData.vehicle_registration}
                                 onChange={(e) => setFormData({ ...formData, vehicle_registration: e.target.value })}
                             />
@@ -119,6 +126,7 @@ const CargoEntry = () => {
                                 type="text"
                                 required
                                 className="form-input"
+                                placeholder="Enter driver name"
                                 value={formData.driver_name}
                                 onChange={(e) => setFormData({ ...formData, driver_name: e.target.value })}
                             />
@@ -130,6 +138,7 @@ const CargoEntry = () => {
                                 type="text"
                                 required
                                 className="form-input"
+                                placeholder="Enter driver ID"
                                 value={formData.driver_id}
                                 onChange={(e) => setFormData({ ...formData, driver_id: e.target.value })}
                             />

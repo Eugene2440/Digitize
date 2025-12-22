@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { visitorService } from '@/services/visitor.service';
+import { formatTimestamp } from '@/utils/dateFormatter';
 import { cargoService } from '@/services/cargo.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { Users, BarChart3, Package } from 'lucide-react';
@@ -131,8 +132,8 @@ const Dashboard = () => {
                                                 {visitor.status?.replace('_', ' ')}
                                             </span>
                                         </td>
-                                        <td className="table-cell text-xs">
-                                            {new Date(visitor.sign_in_time).toLocaleString()}
+                                        <td className="table-cell">
+                                            {formatTimestamp(visitor.sign_in_time)}
                                         </td>
                                     </tr>
                                 ))}

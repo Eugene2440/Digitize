@@ -4,6 +4,7 @@ import { visitorService } from '@/services/visitor.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { InputModal, ConfirmModal } from '@/components/ui/modal';
 import { UserPlus, LogIn, LogOut, Trash2, ChevronUp, ChevronDown, Settings } from 'lucide-react';
+import { formatTimestamp } from '@/utils/dateFormatter';
 
 const VisitorList = () => {
     const navigate = useNavigate();
@@ -21,7 +22,6 @@ const VisitorList = () => {
     const [bulkDeleteModal, setBulkDeleteModal] = useState(false);
     const [badgeNumber, setBadgeNumber] = useState('');
     const [showColumnMenu, setShowColumnMenu] = useState(false);
-    const [columnMenuPosition, setColumnMenuPosition] = useState({ top: 0, left: 0 });
     const [visibleColumns, setVisibleColumns] = useState({
         name: true,
         id_number: true,
@@ -43,17 +43,12 @@ const VisitorList = () => {
                 setShowColumnMenu(false);
             }
         };
-        
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showColumnMenu]);
 
-    const handleColumnMenuToggle = (event) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        setColumnMenuPosition({
-            top: rect.bottom + 8,
-            left: rect.right - 224 // 14rem = 224px
-        });
+    const handleColumnMenuToggle = () => {
         setShowColumnMenu(!showColumnMenu);
     };
 
@@ -120,7 +115,7 @@ const VisitorList = () => {
     };
 
     const handleSelectOne = (id) => {
-        setSelectedIds(prev => 
+        setSelectedIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         );
     };
@@ -171,10 +166,24 @@ const VisitorList = () => {
                 <div className="flex gap-3">
                     {hasRole('admin') && (
                         <div className="column-menu-container">
-                            <button className="cta-button" style={{background: 'white', color: 'var(--moss)', border: '1px solid var(--moss)'}} onClick={handleColumnMenuToggle}>
+                            <button className="btn-outline-shadow" onClick={handleColumnMenuToggle}>
                                 <Settings className="h-4 w-4" />
                                 Columns
                             </button>
+                            {showColumnMenu && (
+                                <div className="column-menu">
+                                    {Object.keys(visibleColumns).map(col => (
+                                        <label key={col} className="column-menu-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={visibleColumns[col]}
+                                                onChange={(e) => setVisibleColumns({ ...visibleColumns, [col]: e.target.checked })}
+                                            />
+                                            <span className="capitalize">{col.replace('_', ' ')}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                     <button className="cta-button" onClick={() => navigate('/visitors/new')}>
@@ -215,7 +224,7 @@ const VisitorList = () => {
                     <thead>
                         <tr>
                             {hasRole('admin') && (
-                                <th className="table-header" style={{width: '48px'}}>
+                                <th className="table-header" style={{ width: '48px' }}>
                                     <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === filteredVisitors.length && filteredVisitors.length > 0} />
                                 </th>
                             )}
@@ -257,7 +266,7 @@ const VisitorList = () => {
                     <tbody>
                         {filteredVisitors.length === 0 ? (
                             <tr>
-                                <td colSpan={hasRole('admin') ? 10 : 9} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
+                                <td colSpan={hasRole('admin') ? 10 : 9} className="table-cell text-center py-8" style={{ color: '#6b7280' }}>
                                     No visitors found
                                 </td>
                             </tr>
@@ -283,12 +292,12 @@ const VisitorList = () => {
                                     )}
                                     {visibleColumns.time_in && (
                                         <td className="table-cell text-xs">
-                                            {visitor.sign_in_time ? new Date(visitor.sign_in_time).toLocaleString() : '-'}
+                                            {visitor.sign_in_time ? formatTimestamp(visitor.sign_in_time) : '-'}
                                         </td>
                                     )}
                                     {visibleColumns.time_out && (
                                         <td className="table-cell text-xs">
-                                            {visitor.sign_out_time ? new Date(visitor.sign_out_time).toLocaleString() : '-'}
+                                            {visitor.sign_out_time ? formatTimestamp(visitor.sign_out_time) : '-'}
                                         </td>
                                     )}
                                     <td className="table-cell">
@@ -317,26 +326,7 @@ const VisitorList = () => {
                 </table>
             </div>
 
-            {showColumnMenu && (
-                <div 
-                    className="column-dropdown" 
-                    style={{
-                        top: `${columnMenuPosition.top}px`,
-                        left: `${columnMenuPosition.left}px`
-                    }}
-                >
-                    {Object.keys(visibleColumns).map(col => (
-                        <label key={col} className="column-dropdown-item">
-                            <input
-                                type="checkbox"
-                                checked={visibleColumns[col]}
-                                onChange={(e) => setVisibleColumns({...visibleColumns, [col]: e.target.checked})}
-                            />
-                            <span className="capitalize">{col.replace('_', ' ')}</span>
-                        </label>
-                    ))}
-                </div>
-            )}
+
 
             <InputModal
                 isOpen={signInModal.open}

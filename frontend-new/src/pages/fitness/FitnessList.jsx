@@ -8,6 +8,7 @@ import { Dumbbell, Trash2, ChevronUp, ChevronDown, Settings, FileDown } from 'lu
 import { Modal, ConfirmModal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
 import { Label } from '@/components/ui/label';
+import { formatTimestamp } from '@/utils/dateFormatter';
 
 const FitnessList = () => {
     const navigate = useNavigate();
@@ -70,7 +71,7 @@ const FitnessList = () => {
     };
 
     const handleSelectOne = (id) => {
-        setSelectedIds(prev => 
+        setSelectedIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         );
     };
@@ -148,7 +149,7 @@ const FitnessList = () => {
 
             // Group by session
             const sessions = ['morning', 'afternoon', 'evening'];
-            
+
             sessions.forEach(session => {
                 csv += `\n${session.toUpperCase()} SESSION\n`;
                 csv += 'Name,ID Number,Phone Number,Company,';
@@ -165,7 +166,7 @@ const FitnessList = () => {
                         csv += `${member.id_number || 'N/A'},`;
                         csv += `${member.phone_number || 'N/A'},`;
                         csv += `${member.company || 'N/A'},`;
-                        
+
                         let total = 0;
                         record.days.forEach(day => {
                             csv += `${day},`;
@@ -240,34 +241,28 @@ const FitnessList = () => {
                     <p className="page-subtitle">Track gym attendance</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="secondary-btn" onClick={() => setShowReportModal(true)}>
+                    <button className="btn-outline-shadow" onClick={() => setShowReportModal(true)}>
                         <FileDown className="h-4 w-4" />
                         Generate Report
                     </button>
                     {hasRole('admin') && (
-                        <div className="relative">
-                            <button className="action-btn" onClick={() => setShowColumnMenu(!showColumnMenu)}>
-                                <Settings className="h-4 w-4 mr-2" />
+                        <div className="column-menu-container">
+                            <button className="btn-outline-shadow" onClick={() => setShowColumnMenu(!showColumnMenu)}>
+                                <Settings className="h-4 w-4" />
                                 Columns
                             </button>
                             {showColumnMenu && (
-                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50" style={{
-                                    background: 'rgba(255, 255, 255, 0.95)',
-                                    backdropFilter: 'blur(10px)',
-                                    border: '1px solid rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <div className="p-2 space-y-1">
-                                        {Object.keys(visibleColumns).map(col => (
-                                            <label key={col} className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={visibleColumns[col]}
-                                                    onChange={(e) => setVisibleColumns({...visibleColumns, [col]: e.target.checked})}
-                                                />
-                                                <span className="text-sm capitalize">{col.replace('_', ' ')}</span>
-                                            </label>
-                                        ))}
-                                    </div>
+                                <div className="column-menu">
+                                    {Object.keys(visibleColumns).map(col => (
+                                        <label key={col} className="column-menu-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={visibleColumns[col]}
+                                                onChange={(e) => setVisibleColumns({ ...visibleColumns, [col]: e.target.checked })}
+                                            />
+                                            <span className="capitalize">{col.replace('_', ' ')}</span>
+                                        </label>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -311,7 +306,7 @@ const FitnessList = () => {
                     <thead>
                         <tr>
                             {hasRole('admin') && (
-                                <th className="table-header" style={{width: '48px'}}>
+                                <th className="table-header" style={{ width: '48px' }}>
                                     <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === filteredAttendance.length && filteredAttendance.length > 0} />
                                 </th>
                             )}
@@ -344,7 +339,7 @@ const FitnessList = () => {
                     <tbody>
                         {filteredAttendance.length === 0 ? (
                             <tr>
-                                <td colSpan={hasRole('admin') ? 7 : 6} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
+                                <td colSpan={hasRole('admin') ? 7 : 6} className="table-cell text-center py-8" style={{ color: '#6b7280' }}>
                                     No attendance records found
                                 </td>
                             </tr>
@@ -366,7 +361,7 @@ const FitnessList = () => {
                                         </td>
                                     )}
                                     {visibleColumns.date && <td className="table-cell">{new Date(record.date).toLocaleDateString()}</td>}
-                                    {visibleColumns.check_in && <td className="table-cell text-xs">{new Date(record.check_in).toLocaleString()}</td>}
+                                    {visibleColumns.check_in && <td className="table-cell text-xs">{formatTimestamp(record.check_in)}</td>}
                                     <td className="table-cell">
                                         <div className="actions-group">
                                             {!record.check_out && (
@@ -375,7 +370,7 @@ const FitnessList = () => {
                                                 </button>
                                             )}
                                             {record.check_out && (
-                                                <span className="text-xs" style={{color: '#6b7280'}}>{new Date(record.check_out).toLocaleString()}</span>
+                                                <span className="text-xs" style={{ color: '#6b7280' }}>{formatTimestamp(record.check_out)}</span>
                                             )}
                                             {hasRole('admin') && (
                                                 <button className="action-btn delete" onClick={() => setDeleteModal({ open: true, id: record.id })}>

@@ -24,7 +24,10 @@ const Sidebar = ({ isOpen, onClose }) => {
 
             {/* Sidebar */}
             <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-                <div className="sidebar-title">Digital Logbook</div>
+                <div className="sidebar-title">
+                    <img src="/logo.png" alt="Logo" className="sidebar-logo" />
+                    Digital Logbook
+                </div>
                 <nav>
                     <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end onClick={handleLinkClick}>
                         <Home className="h-5 w-5" />
@@ -52,7 +55,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                             <div className="nav-section">
                                 Visitors
                             </div>
-                            <NavLink to="/visitors" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
+                            <NavLink to="/visitors" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end onClick={handleLinkClick}>
                                 <ClipboardList className="h-5 w-5" />
                                 Visitor List
                             </NavLink>
@@ -64,7 +67,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                             <div className="nav-section">
                                 Cargo
                             </div>
-                            <NavLink to="/cargo" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
+                            <NavLink to="/cargo" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end onClick={handleLinkClick}>
                                 <Truck className="h-5 w-5" />
                                 Cargo List
                             </NavLink>

@@ -84,43 +84,10 @@ const VisitorSignIn = () => {
 
     return (
         <div className="visitor-form-container">
-            <h1 className="form-title">New Visitor Entry</h1>
+            <h1 className="form-title">New Visitor</h1>
+            <p className="form-subtitle">Register a new visitor entry</p>
+
             <form onSubmit={handleSubmit}>
-                <div className="form-grid form-grid-3">
-                    <div className="form-group">
-                        <label htmlFor="first_name" className="form-label">First Name</label>
-                        <input
-                            id="first_name"
-                            type="text"
-                            required
-                            className="form-input"
-                            value={formData.first_name}
-                            onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="middle_name" className="form-label">Middle Name</label>
-                        <input
-                            id="middle_name"
-                            type="text"
-                            required
-                            className="form-input"
-                            value={formData.middle_name}
-                            onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="last_name" className="form-label">Last Name (Optional)</label>
-                        <input
-                            id="last_name"
-                            type="text"
-                            className="form-input"
-                            value={formData.last_name}
-                            onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                        />
-                    </div>
-                </div>
-                
                 <div className="form-group dropdown-container" ref={dropdownRef}>
                     <label htmlFor="id_number" className="form-label">ID Number</label>
                     <input
@@ -128,6 +95,7 @@ const VisitorSignIn = () => {
                         type="text"
                         required
                         className="form-input"
+                        placeholder="Enter ID number"
                         value={formData.id_number}
                         onChange={(e) => handleIdChange(e.target.value)}
                         autoComplete="off"
@@ -146,7 +114,45 @@ const VisitorSignIn = () => {
                         </div>
                     )}
                 </div>
-                
+
+                <div className="form-grid form-grid-3">
+                    <div className="form-group">
+                        <label htmlFor="first_name" className="form-label">First Name</label>
+                        <input
+                            id="first_name"
+                            type="text"
+                            required
+                            className="form-input"
+                            placeholder="Enter first name"
+                            value={formData.first_name}
+                            onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="middle_name" className="form-label">Middle Name</label>
+                        <input
+                            id="middle_name"
+                            type="text"
+                            required
+                            className="form-input"
+                            placeholder="Enter middle name"
+                            value={formData.middle_name}
+                            onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="last_name" className="form-label">Last Name</label>
+                        <input
+                            id="last_name"
+                            type="text"
+                            className="form-input"
+                            placeholder="Optional"
+                            value={formData.last_name}
+                            onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                        />
+                    </div>
+                </div>
+
                 <div className="form-grid form-grid-2">
                     <div className="form-group">
                         <label htmlFor="area" className="form-label">Area of Visit</label>
@@ -155,6 +161,7 @@ const VisitorSignIn = () => {
                             type="text"
                             required
                             className="form-input"
+                            placeholder="Enter area"
                             value={formData.area_of_visit}
                             onChange={(e) => setFormData({ ...formData, area_of_visit: e.target.value })}
                         />
@@ -166,12 +173,13 @@ const VisitorSignIn = () => {
                             type="text"
                             required
                             className="form-input"
+                            placeholder="Enter purpose"
                             value={formData.purpose}
                             onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
                         />
                     </div>
                 </div>
-                
+
                 <div className="form-group">
                     <label htmlFor="badge_number" className="form-label">Badge Number</label>
                     <input
@@ -180,11 +188,12 @@ const VisitorSignIn = () => {
                         required
                         maxLength={3}
                         className="form-input"
+                        placeholder="3 digits"
                         value={formData.badge_number}
                         onChange={(e) => setFormData({ ...formData, badge_number: e.target.value })}
                     />
                 </div>
-                
+
                 <div className="form-actions">
                     <button type="submit" disabled={loading} className="btn-primary">
                         {loading ? 'Creating...' : 'Register Visitor'}

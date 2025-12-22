@@ -4,6 +4,7 @@ import { cargoService } from '@/services/cargo.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { Package, Trash2, ChevronUp, ChevronDown, Settings } from 'lucide-react';
 import { ConfirmModal } from '@/components/ui/modal';
+import { formatTimestamp } from '@/utils/dateFormatter';
 
 const CargoList = () => {
     const navigate = useNavigate();
@@ -73,7 +74,7 @@ const CargoList = () => {
     };
 
     const handleSelectOne = (id) => {
-        setSelectedIds(prev => 
+        setSelectedIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         );
     };
@@ -122,31 +123,25 @@ const CargoList = () => {
                     <h1 className="page-title">Cargo Management</h1>
                     <p className="page-subtitle">View and manage cargo entries</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-4">
                     {hasRole('admin') && (
-                        <div className="relative">
-                            <button className="action-btn" onClick={() => setShowColumnMenu(!showColumnMenu)}>
-                                <Settings className="h-4 w-4 mr-2" />
+                        <div className="column-menu-container">
+                            <button className="btn-outline-shadow" onClick={() => setShowColumnMenu(!showColumnMenu)}>
+                                <Settings className="h-4 w-4" />
                                 Columns
                             </button>
                             {showColumnMenu && (
-                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50" style={{
-                                    background: 'rgba(255, 255, 255, 0.95)',
-                                    backdropFilter: 'blur(10px)',
-                                    border: '1px solid rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <div className="p-2 space-y-1">
-                                        {Object.keys(visibleColumns).map(col => (
-                                            <label key={col} className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={visibleColumns[col]}
-                                                    onChange={(e) => setVisibleColumns({...visibleColumns, [col]: e.target.checked})}
-                                                />
-                                                <span className="text-sm capitalize">{col.replace('_', ' ')}</span>
-                                            </label>
-                                        ))}
-                                    </div>
+                                <div className="column-menu">
+                                    {Object.keys(visibleColumns).map(col => (
+                                        <label key={col} className="column-menu-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={visibleColumns[col]}
+                                                onChange={(e) => setVisibleColumns({ ...visibleColumns, [col]: e.target.checked })}
+                                            />
+                                            <span className="capitalize">{col.replace('_', ' ')}</span>
+                                        </label>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -189,7 +184,7 @@ const CargoList = () => {
                     <thead>
                         <tr>
                             {hasRole('admin') && (
-                                <th className="table-header" style={{width: '48px'}}>
+                                <th className="table-header" style={{ width: '48px' }}>
                                     <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === filteredCargo.length && filteredCargo.length > 0} />
                                 </th>
                             )}
@@ -231,7 +226,7 @@ const CargoList = () => {
                     <tbody>
                         {filteredCargo.length === 0 ? (
                             <tr>
-                                <td colSpan={hasRole('admin') ? 10 : 9} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
+                                <td colSpan={hasRole('admin') ? 10 : 9} className="table-cell text-center py-8" style={{ color: '#6b7280' }}>
                                     No cargo entries found
                                 </td>
                             </tr>
@@ -258,7 +253,7 @@ const CargoList = () => {
                                     {visibleColumns.vehicle && <td className="table-cell">{item.vehicle_registration}</td>}
                                     {visibleColumns.time_in && (
                                         <td className="table-cell text-xs">
-                                            {item.time_in ? new Date(item.time_in).toLocaleString() : '-'}
+                                            {item.time_in ? formatTimestamp(item.time_in) : '-'}
                                         </td>
                                     )}
                                     {hasRole('admin') && (

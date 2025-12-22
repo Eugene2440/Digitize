@@ -53,7 +53,7 @@ const FitnessEntry = () => {
                     })
                 )
             );
-            
+
             const failed = results.filter(r => r.status === 'rejected');
             if (failed.length === 0) {
                 showToast(`${selectedMembers.length} member(s) checked in successfully!`, 'success');
@@ -75,9 +75,11 @@ const FitnessEntry = () => {
 
     return (
         <div className="fitness-form-container">
-            <h1 className="fitness-form-title">Gym Attendance</h1>
-            
-            <div className="form-group">
+            <h1 className="fitness-form-title">Gym Check-In</h1>
+            <p className="form-subtitle">Check in members for gym attendance</p>
+
+
+            <div className="form-group" style={{ position: 'relative' }}>
                 <label htmlFor="search" className="form-label">Search Member</label>
                 <input
                     id="search"
@@ -87,22 +89,21 @@ const FitnessEntry = () => {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
+                {search && filteredMembers.length > 0 && (
+                    <div className="member-search-results">
+                        {filteredMembers.map(member => (
+                            <div
+                                key={member.id}
+                                className="member-search-item"
+                                onClick={() => handleAddMember(member)}
+                            >
+                                <div className="member-search-name">{member.name}</div>
+                                <div className="member-search-details">{member.id_number} - {member.company}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
-
-            {search && filteredMembers.length > 0 && (
-                <div className="member-search-results">
-                    {filteredMembers.map(member => (
-                        <div
-                            key={member.id}
-                            className="member-search-item"
-                            onClick={() => handleAddMember(member)}
-                        >
-                            <div className="member-search-name">{member.name}</div>
-                            <div className="member-search-details">{member.id_number} - {member.company}</div>
-                        </div>
-                    ))}
-                </div>
-            )}
 
             {selectedMembers.length > 0 && (
                 <div className="form-group">
@@ -118,7 +119,7 @@ const FitnessEntry = () => {
                                         {member.id_number}
                                     </div>
                                 </div>
-                                <button 
+                                <button
                                     className={`remove-member-btn ${selectedMembers.length > 3 ? 'compact' : ''}`}
                                     onClick={() => handleRemoveMember(member.id)}
                                 >
@@ -145,9 +146,9 @@ const FitnessEntry = () => {
             </div>
 
             <div className="form-actions">
-                <button 
-                    className="btn-primary" 
-                    onClick={handleCheckIn} 
+                <button
+                    className="btn-primary"
+                    onClick={handleCheckIn}
                     disabled={loading || selectedMembers.length === 0}
                 >
                     {loading ? 'Checking In...' : `Check In ${selectedMembers.length > 0 ? `(${selectedMembers.length})` : ''}`}

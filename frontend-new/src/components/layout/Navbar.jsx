@@ -23,13 +23,13 @@ const Navbar = ({ onMenuClick, sidebarOpen }) => {
                     </p>
                     <p className="text-sm font-semibold">{user?.full_name}</p>
                 </div>
-                
+
                 <div className="user-avatar">
                     {getInitials(user?.full_name)}
                 </div>
-                
-                <button className="logout-btn" onClick={logout} title="Logout">
-                    <LogOut className="h-4 w-4" />
+
+                <button className="logout-btn" onClick={logout}>
+                    Sign Out
                 </button>
             </div>
         </nav>
