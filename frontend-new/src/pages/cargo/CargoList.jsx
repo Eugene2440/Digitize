@@ -169,7 +169,7 @@ const CargoList = () => {
             </div>
 
             <div className="filters-container">
-                <div className="filters-row">
+                <div className="filters-row" style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <input
                         type="text"
                         placeholder="Search by AWB, description, or company..."
@@ -177,6 +177,11 @@ const CargoList = () => {
                         onChange={(e) => setSearch(e.target.value)}
                         className="search-input"
                     />
+                    <div className="filter-buttons">
+                        <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
+                        <button className={`filter-btn ${filter === 'known' ? 'active' : ''}`} onClick={() => setFilter('known')}>Known</button>
+                        <button className={`filter-btn ${filter === 'unknown' ? 'active' : ''}`} onClick={() => setFilter('unknown')}>Unknown</button>
+                    </div>
                     {hasRole('admin') && (
                         <select
                             className="form-select w-48"
@@ -189,11 +194,6 @@ const CargoList = () => {
                             ))}
                         </select>
                     )}
-                    <div className="filter-buttons">
-                        <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
-                        <button className={`filter-btn ${filter === 'known' ? 'active' : ''}`} onClick={() => setFilter('known')}>Known</button>
-                        <button className={`filter-btn ${filter === 'unknown' ? 'active' : ''}`} onClick={() => setFilter('unknown')}>Unknown</button>
-                    </div>
                 </div>
                 {selectedIds.length > 0 && hasRole('admin') && (
                     <div className="flex items-center gap-2 p-2 bg-blue-50 rounded mt-3">

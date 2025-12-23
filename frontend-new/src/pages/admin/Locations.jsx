@@ -77,120 +77,116 @@ const Locations = () => {
         setIsModalOpen(true);
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
+        <div className="space-y-6">
+            <div className="page-header">
                 <div>
-                    <h1 className="text-2xl font-bold">Location Management</h1>
-                    <p className="text-gray-500">Manage system locations</p>
+                    <h1 className="page-title">Location Management</h1>
+                    <p className="page-subtitle">Manage system locations</p>
                 </div>
-                <button
-                    onClick={handleOpenModal}
-                    className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-                >
+                <button onClick={handleOpenModal} className="cta-button">
                     <Plus className="h-4 w-4" />
                     Add Location
                 </button>
             </div>
 
-            <div className="bg-white rounded-lg shadowoverflow-hidden">
-                <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
+            <div className="visitor-list-table">
+                <table className="table">
+                    <thead>
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="table-header">Name</th>
+                            <th className="table-header">Code</th>
+                            <th className="table-header">Address</th>
+                            <th className="table-header">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
-                        {locations.map((location) => (
-                            <tr key={location.id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <MapPin className="h-5 w-5 text-gray-500" />
-                                        </div>
-                                        <div className="ml-4">
-                                            <div className="text-sm font-medium text-gray-900">{location.name}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{location.code}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{location.address}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button
-                                        onClick={() => handleEdit(location)}
-                                        className="text-indigo-600 hover:text-indigo-900 mr-4"
-                                    >
-                                        <Edit2 className="h-4 w-4" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(location.id)}
-                                        className="text-red-600 hover:text-red-900"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
+                    <tbody>
+                        {locations.length === 0 ? (
+                            <tr>
+                                <td colSpan={4} className="table-cell text-center py-8" style={{ color: '#6b7280' }}>
+                                    No locations found
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            locations.map((location) => (
+                                <tr key={location.id} className="table-row">
+                                    <td className="table-cell font-medium">{location.name}</td>
+                                    <td className="table-cell">{location.code}</td>
+                                    <td className="table-cell">{location.address}</td>
+                                    <td className="table-cell">
+                                        <div className="actions-group">
+                                            <button onClick={() => handleEdit(location)} className="action-btn">
+                                                <Edit2 className="h-4 w-4" />
+                                            </button>
+                                            <button onClick={() => handleDelete(location.id)} className="action-btn delete">
+                                                <Trash2 className="h-4 w-4" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                        <h2 className="text-xl font-bold mb-4">
-                            {editingLocation ? 'Edit Location' : 'Add New Location'}
-                        </h2>
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h2 className="modal-title">
+                                {editingLocation ? 'Edit Location' : 'Add New Location'}
+                            </h2>
+                            <button onClick={() => setIsModalOpen(false)} className="modal-close-btn">
+                                ×
+                            </button>
+                        </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">Name</label>
                                     <input
                                         type="text"
                                         required
-                                        className="w-full p-2 border rounded-md"
+                                        className="form-input"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
+                                <div className="form-group">
+                                    <label className="form-label">Code</label>
                                     <input
                                         type="text"
                                         required
-                                        className="w-full p-2 border rounded-md"
+                                        className="form-input"
                                         value={formData.code}
                                         onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                <div className="form-group">
+                                    <label className="form-label">Address</label>
                                     <input
                                         type="text"
-                                        className="w-full p-2 border rounded-md"
+                                        className="form-input"
                                         value={formData.address}
                                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-end gap-3 mt-6">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md"
-                                >
+                            <div className="modal-footer">
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">
                                     Cancel
                                 </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
-                                >
+                                <button type="submit" className="btn-primary">
                                     {editingLocation ? 'Update' : 'Create'}
                                 </button>
                             </div>

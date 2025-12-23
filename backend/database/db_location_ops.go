@@ -1,3 +1,10 @@
+package database
+
+import (
+	"digital-logbook/models"
+	"errors"
+	"time"
+)
 
 // Location operations
 func (db *MockDB) CreateLocation(loc *models.Location) error {

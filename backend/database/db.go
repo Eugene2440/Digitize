@@ -89,14 +89,6 @@ func seedDefaultData() {
 		PasswordHash: string(hashedPassword2),
 		Role:         models.RoleDataEntry,
 		FullName:     "Data Entry Operator",
-		CreatedAt:    time.Now(),
-	}
-	dataEntry := &models.User{
-		ID:           userID,
-		Username:     "data_entry",
-		PasswordHash: string(hashedPassword2),
-		Role:         models.RoleDataEntry,
-		FullName:     "Data Entry Operator",
 		LocationID:   &loc1.ID,
 		CreatedAt:    time.Now(),
 	}
@@ -131,7 +123,6 @@ func seedDefaultData() {
 		BadgeNumber: "B002",
 		SignInTime:  time.Now().Add(-5 * time.Hour),
 		SignOutTime: &[]time.Time{time.Now().Add(-3 * time.Hour)}[0],
-		SignOutTime: &[]time.Time{time.Now().Add(-3 * time.Hour)}[0],
 		LocationID:  loc2.ID,
 		CreatedAt:   time.Now().Add(-5 * time.Hour),
 	}
@@ -148,7 +139,6 @@ func seedDefaultData() {
 		DriverName:          "Mike Johnson",
 		Company:             "Fast Logistics Inc",
 		VehicleRegistration: "ABC-1234",
-		SealNumber:          "SEAL001",
 		SealNumber:          "SEAL001",
 		LocationID:          loc1.ID,
 		CreatedAt:           time.Now().Add(-1 * time.Hour),
@@ -179,6 +169,12 @@ func (db *MockDB) GetUserByUsername(username string) (*models.User, error) {
 
 	for _, user := range users {
 		if user.Username == username {
+			// Populate location data if user has a location
+			if user.LocationID != nil {
+				if loc, exists := locations[*user.LocationID]; exists {
+					user.Location = loc
+				}
+			}
 			return user, nil
 		}
 	}
@@ -202,6 +198,12 @@ func (db *MockDB) GetAllUsers() []*models.User {
 
 	result := make([]*models.User, 0, len(users))
 	for _, user := range users {
+		// Populate location data if user has a location
+		if user.LocationID != nil {
+			if loc, exists := locations[*user.LocationID]; exists {
+				user.Location = loc
+			}
+		}
 		result = append(result, user)
 	}
 	return result
@@ -263,6 +265,15 @@ func (db *MockDB) GetAllVisitors(filters map[string]interface{}) []*models.Visit
 			if string(visitor.Status) != status {
 				continue
 			}
+		}
+		if locationID, ok := filters["location_id"].(uint); ok {
+			if visitor.LocationID != locationID {
+				continue
+			}
+		}
+		// Populate location data
+		if loc, exists := locations[visitor.LocationID]; exists {
+			visitor.Location = loc
 		}
 		result = append(result, visitor)
 	}

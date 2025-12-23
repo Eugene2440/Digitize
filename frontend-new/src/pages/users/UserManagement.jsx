@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { userService } from '@/services/user.service';
 import { locationService } from '@/services/location.service';
-import { Users, Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -84,10 +84,7 @@ const UserManagement = () => {
         <div className="space-y-4 md:space-y-6">
             <div className="page-header">
                 <div>
-                    <h1 className="page-title flex items-center gap-2">
-                        <Users className="h-6 w-6" />
-                        User Management
-                    </h1>
+                    <h1 className="page-title">User Management</h1>
                     <p className="page-subtitle">Manage system users</p>
                 </div>
                 <button className={showForm ? 'secondary-btn' : 'cta-button'} onClick={() => setShowForm(!showForm)}>
@@ -182,16 +179,16 @@ const UserManagement = () => {
                         <thead>
                             <tr>
                                 <th className="table-header">Name</th>
-                                <th className="table-header hidden sm:table-cell">Username</th>
+                                <th className="table-header">Username</th>
                                 <th className="table-header">Role</th>
-                                <th className="table-header hidden md:table-cell">Location</th>
-                                <th className="table-header text-right">Actions</th>
+                                <th className="table-header">Location</th>
+                                <th className="table-header">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {users.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="table-cell text-center py-8" style={{ color: '#6b7280' }}>
+                                    <td colSpan={5} className="table-cell text-center py-8" style={{ color: '#6b7280' }}>
                                         No users found
                                     </td>
                                 </tr>
@@ -199,20 +196,20 @@ const UserManagement = () => {
                                 users.map((user) => (
                                     <tr key={user.id} className="table-row">
                                         <td className="table-cell font-medium">{user.full_name}</td>
-                                        <td className="table-cell hidden sm:table-cell">{user.username}</td>
+                                        <td className="table-cell">{user.username}</td>
                                         <td className="table-cell">
-                                            <span className={user.role === 'admin' ? 'role-badge-admin' : 'role-badge-standard'}>
+                                            <span className={user.role === 'admin' ? 'role-badge-admin' : 'role-badge-standard'} style={{ fontSize: 'var(--base-font-size)' }}>
                                                 {user.role?.replace('_', ' ')}
                                             </span>
                                         </td>
-                                        <td className="table-cell hidden md:table-cell">
+                                        <td className="table-cell">
                                             {user.location ? (
-                                                <span className="text-xs text-gray-500">{user.location.name}</span>
+                                                <span style={{ fontSize: 'var(--base-font-size)', color: '#6b7280' }}>{user.location.name}</span>
                                             ) : (
-                                                <span className="text-xs text-gray-400 italic">Global</span>
+                                                <span style={{ fontSize: 'var(--base-font-size)', color: '#9ca3af', fontStyle: 'italic' }}>Global</span>
                                             )}
                                         </td>
-                                        <td className="table-cell text-right">
+                                        <td className="table-cell">
                                             <button className="action-btn delete" onClick={() => handleDelete(user.id)}>
                                                 <Trash2 className="h-4 w-4" />
                                             </button>
