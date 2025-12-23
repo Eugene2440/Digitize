@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cargoService } from '@/services/cargo.service';
+import { locationService } from '@/services/location.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { Package, Trash2, ChevronUp, ChevronDown, Settings } from 'lucide-react';
 import { ConfirmModal } from '@/components/ui/modal';
@@ -12,6 +13,8 @@ const CargoList = () => {
     const [cargo, setCargo] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [locations, setLocations] = useState([]);
+    const [locationFilter, setLocationFilter] = useState('');
     const [filter, setFilter] = useState('all');
     const [sortField, setSortField] = useState('time_in');
     const [sortOrder, setSortOrder] = useState('desc');
@@ -20,6 +23,7 @@ const CargoList = () => {
     const [showColumnMenu, setShowColumnMenu] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState({
         category: true,
+        location: true,
         awb: true,
         uld: true,
         description: true,
@@ -31,18 +35,29 @@ const CargoList = () => {
 
     useEffect(() => {
         fetchCargo();
-    }, [filter]);
+        fetchLocations();
+    }, [filter, locationFilter]);
 
     const fetchCargo = async () => {
         setLoading(true);
         try {
             const params = filter !== 'all' ? { category: filter } : {};
+            if (locationFilter) params.location_id = locationFilter;
             const data = await cargoService.getAll(params);
             setCargo(data);
         } catch (error) {
             console.error('Error fetching cargo:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchLocations = async () => {
+        try {
+            const data = await locationService.getAll();
+            setLocations(data);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
         }
     };
 
@@ -162,6 +177,18 @@ const CargoList = () => {
                         onChange={(e) => setSearch(e.target.value)}
                         className="search-input"
                     />
+                    {hasRole('admin') && (
+                        <select
+                            className="form-select w-48"
+                            value={locationFilter}
+                            onChange={(e) => setLocationFilter(e.target.value)}
+                        >
+                            <option value="">All Locations</option>
+                            {locations.map(loc => (
+                                <option key={loc.id} value={loc.id}>{loc.name}</option>
+                            ))}
+                        </select>
+                    )}
                     <div className="filter-buttons">
                         <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
                         <button className={`filter-btn ${filter === 'known' ? 'active' : ''}`} onClick={() => setFilter('known')}>Known</button>
@@ -195,6 +222,7 @@ const CargoList = () => {
                                     </div>
                                 </th>
                             )}
+                            {visibleColumns.location && <th className="table-header">Location</th>}
                             {visibleColumns.awb && (
                                 <th className="table-header sortable" onClick={() => handleSort('awb_number')}>
                                     <div className="flex items-center gap-1">
@@ -243,6 +271,15 @@ const CargoList = () => {
                                             <span className={item.category === 'known' ? 'category-badge-known' : 'category-badge-unknown'}>
                                                 {item.category}
                                             </span>
+                                        </td>
+                                    )}
+                                    {visibleColumns.location && (
+                                        <td className="table-cell">
+                                            {item.location ? (
+                                                <span className="text-xs text-gray-500">{item.location.name}</span>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">-</span>
+                                            )}
                                         </td>
                                     )}
                                     {visibleColumns.awb && <td className="table-cell font-medium">{item.awb_number}</td>}

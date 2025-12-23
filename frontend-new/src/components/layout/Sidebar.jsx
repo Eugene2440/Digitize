@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, UserPlus, Package, ClipboardList, Truck, Users, FileText, Dumbbell } from 'lucide-react';
+import { Home, UserPlus, Package, ClipboardList, Truck, Users, FileText, Dumbbell, MapPin } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const { hasRole, hasAnyRole } = useAuth();
@@ -25,7 +25,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             {/* Sidebar */}
             <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
                 <div className="sidebar-title">
-                    <img src="/logo.png" alt="Logo" className="sidebar-logo" />
+
                     Digital Logbook
                 </div>
                 <nav>
@@ -102,6 +102,10 @@ const Sidebar = ({ isOpen, onClose }) => {
                             <NavLink to="/users" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
                                 <Users className="h-5 w-5" />
                                 User Management
+                            </NavLink>
+                            <NavLink to="/locations" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleLinkClick}>
+                                <MapPin className="h-5 w-5" />
+                                Locations
                             </NavLink>
                         </>
                     )}

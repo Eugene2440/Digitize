@@ -23,6 +23,8 @@ type Cargo struct {
 	DriverName           string        `gorm:"not null" json:"driver_name"`
 	Company              string        `gorm:"not null" json:"company"`
 	VehicleRegistration  string        `gorm:"not null" json:"vehicle_registration"`
+	LocationID           uint          `gorm:"not null" json:"location_id"`
+	Location             *Location     `gorm:"foreignKey:LocationID" json:"location,omitempty"`
 	TimeIn               time.Time     `gorm:"not null" json:"time_in"`
 	CreatedAt            time.Time     `json:"created_at"`
 	UpdatedAt            time.Time     `json:"updated_at"`

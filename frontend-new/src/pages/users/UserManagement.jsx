@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { userService } from '@/services/user.service';
+import { locationService } from '@/services/location.service';
 import { Users, Plus, Trash2, X } from 'lucide-react';
 
 const UserManagement = () => {
@@ -10,12 +11,15 @@ const UserManagement = () => {
         username: '',
         password: '',
         full_name: '',
-        role: 'data_entry'
+        role: 'data_entry',
+        location_id: ''
     });
+    const [locations, setLocations] = useState([]);
     const [error, setError] = useState('');
 
     useEffect(() => {
         fetchUsers();
+        fetchLocations();
     }, []);
 
     const fetchUsers = async () => {
@@ -29,13 +33,29 @@ const UserManagement = () => {
         }
     };
 
+    const fetchLocations = async () => {
+        try {
+            const data = await locationService.getAll();
+            setLocations(data);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setError('');
         try {
-            await userService.create(formData);
+            const reqData = { ...formData };
+            if (reqData.location_id) {
+                reqData.location_id = parseInt(reqData.location_id);
+            } else {
+                delete reqData.location_id;
+            }
+            await userService.create(reqData);
             setShowForm(false);
-            setFormData({ username: '', password: '', full_name: '', role: 'data_entry' });
+            setFormData({ username: '', password: '', full_name: '', role: 'data_entry', location_id: '' });
             fetchUsers();
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to create user');
@@ -128,9 +148,24 @@ const UserManagement = () => {
                                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                                 >
                                     <option value="data_entry">Data Entry</option>
-                                    <option value="dashboard_visitor">Dashboard - Visitor</option>
                                     <option value="dashboard_cargo">Dashboard - Cargo</option>
                                     <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="location" className="form-label">Location</label>
+                                <select
+                                    id="location"
+                                    className="form-select"
+                                    value={formData.location_id}
+                                    onChange={(e) => setFormData({ ...formData, location_id: e.target.value })}
+                                >
+                                    <option value="">Global / Super Admin (No Location)</option>
+                                    {locations.map(loc => (
+                                        <option key={loc.id} value={loc.id}>
+                                            {loc.name} ({loc.code})
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -149,13 +184,14 @@ const UserManagement = () => {
                                 <th className="table-header">Name</th>
                                 <th className="table-header hidden sm:table-cell">Username</th>
                                 <th className="table-header">Role</th>
+                                <th className="table-header hidden md:table-cell">Location</th>
                                 <th className="table-header text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {users.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="table-cell text-center py-8" style={{color: '#6b7280'}}>
+                                    <td colSpan={4} className="table-cell text-center py-8" style={{ color: '#6b7280' }}>
                                         No users found
                                     </td>
                                 </tr>
@@ -168,6 +204,13 @@ const UserManagement = () => {
                                             <span className={user.role === 'admin' ? 'role-badge-admin' : 'role-badge-standard'}>
                                                 {user.role?.replace('_', ' ')}
                                             </span>
+                                        </td>
+                                        <td className="table-cell hidden md:table-cell">
+                                            {user.location ? (
+                                                <span className="text-xs text-gray-500">{user.location.name}</span>
+                                            ) : (
+                                                <span className="text-xs text-gray-400 italic">Global</span>
+                                            )}
                                         </td>
                                         <td className="table-cell text-right">
                                             <button className="action-btn delete" onClick={() => handleDelete(user.id)}>

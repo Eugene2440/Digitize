@@ -24,6 +24,8 @@ type Visitor struct {
 	Status       VisitorStatus  `gorm:"not null;default:'signed_in'" json:"status"`
 	SignInTime   time.Time      `gorm:"not null" json:"sign_in_time"`
 	SignOutTime  *time.Time     `json:"sign_out_time,omitempty"`
+	LocationID   uint           `gorm:"not null" json:"location_id"`
+	Location     *Location      `gorm:"foreignKey:LocationID" json:"location,omitempty"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
 }

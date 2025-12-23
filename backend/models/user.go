@@ -21,6 +21,8 @@ type User struct {
 	PasswordHash string    `gorm:"not null" json:"-"`
 	Role         UserRole  `gorm:"not null" json:"role"`
 	FullName     string    `gorm:"not null" json:"full_name"`
+	LocationID   *uint     `json:"location_id"` // Nullable, as super admins might not have a location
+	Location     *Location `gorm:"foreignKey:LocationID" json:"location,omitempty"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }

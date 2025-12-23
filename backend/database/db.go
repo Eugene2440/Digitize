@@ -17,12 +17,14 @@ var (
 	cargo    = make(map[uint]*models.Cargo)
 	fitness       = make(map[uint]*models.FitnessAttendance)
 	fitnessMembers = make(map[uint]*models.FitnessMember)
+	locations     = make(map[uint]*models.Location)
 
 	userID          uint = 1
 	visitorID       uint = 1
 	cargoID         uint = 1
 	fitnessID       uint = 1
 	fitnessMemberID uint = 1
+	locationID      uint = 1
 
 	mu sync.RWMutex // Mutex for thread-safe operations
 )
@@ -44,6 +46,27 @@ func Initialize() error {
 func seedDefaultData() {
 	mu.Lock()
 	defer mu.Unlock()
+
+	// Create default locations
+	loc1 := &models.Location{
+		ID:        locationID,
+		Name:      "Nairobi HQ",
+		Code:      "NBO-HQ",
+		Address:   "Nairobi, Kenya",
+		CreatedAt: time.Now(),
+	}
+	locations[locationID] = loc1
+	locationID++
+
+	loc2 := &models.Location{
+		ID:        locationID,
+		Name:      "Mombasa Port",
+		Code:      "MBA-PORT",
+		Address:   "Mombasa, Kenya",
+		CreatedAt: time.Now(),
+	}
+	locations[locationID] = loc2
+	locationID++
 
 	// Create default admin user
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
@@ -68,6 +91,15 @@ func seedDefaultData() {
 		FullName:     "Data Entry Operator",
 		CreatedAt:    time.Now(),
 	}
+	dataEntry := &models.User{
+		ID:           userID,
+		Username:     "data_entry",
+		PasswordHash: string(hashedPassword2),
+		Role:         models.RoleDataEntry,
+		FullName:     "Data Entry Operator",
+		LocationID:   &loc1.ID,
+		CreatedAt:    time.Now(),
+	}
 	users[userID] = dataEntry
 	userID++
 
@@ -82,6 +114,7 @@ func seedDefaultData() {
 		Status:      models.StatusSignedIn,
 		BadgeNumber: "B001",
 		SignInTime:  time.Now().Add(-2 * time.Hour),
+		LocationID:  loc1.ID,
 		CreatedAt:   time.Now().Add(-2 * time.Hour),
 	}
 	visitors[visitorID] = visitor1
@@ -98,6 +131,8 @@ func seedDefaultData() {
 		BadgeNumber: "B002",
 		SignInTime:  time.Now().Add(-5 * time.Hour),
 		SignOutTime: &[]time.Time{time.Now().Add(-3 * time.Hour)}[0],
+		SignOutTime: &[]time.Time{time.Now().Add(-3 * time.Hour)}[0],
+		LocationID:  loc2.ID,
 		CreatedAt:   time.Now().Add(-5 * time.Hour),
 	}
 	visitors[visitorID] = visitor2
@@ -114,6 +149,8 @@ func seedDefaultData() {
 		Company:             "Fast Logistics Inc",
 		VehicleRegistration: "ABC-1234",
 		SealNumber:          "SEAL001",
+		SealNumber:          "SEAL001",
+		LocationID:          loc1.ID,
 		CreatedAt:           time.Now().Add(-1 * time.Hour),
 	}
 	cargo[cargoID] = cargo1

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"digital-logbook/database"
+	"digital-logbook/middleware"
 	"digital-logbook/models"
 	"net/http"
 	"strconv"
@@ -17,6 +18,7 @@ type CreateVisitorRequest struct {
 	CompanyFrom string `json:"company_from"`
 	Purpose     string `json:"purpose" binding:"required"`
 	BadgeNumber string `json:"badge_number" binding:"required"`
+	LocationID  uint   `json:"location_id"`
 }
 
 type SignInRequest struct {
@@ -31,6 +33,25 @@ func CreateVisitor(c *gin.Context) {
 		return
 	}
 
+	user, err := middleware.GetCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	var locationID uint
+	if user.LocationID != nil {
+		locationID = *user.LocationID
+	} else {
+		// If user has no location (Super Admin), use provided location or defaults
+		if req.LocationID != 0 {
+			locationID = req.LocationID
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Location ID is required for super admin"})
+			return
+		}
+	}
+
 	visitor := &models.Visitor{
 		Name:        req.Name,
 		IDNumber:    req.IDNumber,
@@ -40,6 +61,7 @@ func CreateVisitor(c *gin.Context) {
 		BadgeNumber: req.BadgeNumber,
 		Status:      models.StatusSignedIn,
 		SignInTime:  time.Now(),
+		LocationID:  locationID,
 	}
 
 	if err := database.DB.CreateVisitor(visitor); err != nil {
@@ -111,7 +133,25 @@ func SignOutVisitor(c *gin.Context) {
 
 // ListVisitors returns all visitors with optional filtering
 func ListVisitors(c *gin.Context) {
+	user, err := middleware.GetCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
 	filters := make(map[string]interface{})
+
+	// If user is restricted to a location, force that filter
+	if user.LocationID != nil {
+		filters["location_id"] = *user.LocationID
+	} else {
+		// If super admin, allow filtering by location query param
+		if locID := c.Query("location_id"); locID != "" {
+			if id, err := strconv.ParseUint(locID, 10, 32); err == nil {
+				filters["location_id"] = uint(id)
+			}
+		}
+	}
 
 	// Filter by status if provided
 	status := c.Query("status")

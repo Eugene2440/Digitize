@@ -14,6 +14,7 @@ import Reports from '@/pages/Reports';
 import FitnessList from '@/pages/fitness/FitnessList';
 import FitnessEntry from '@/pages/fitness/FitnessEntry';
 import MemberManagement from '@/pages/fitness/MemberManagement';
+import Locations from '@/pages/admin/Locations';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -48,19 +49,20 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
-        <Routes>
-          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/visitors" element={<ProtectedRoute><VisitorList /></ProtectedRoute>} />
-          <Route path="/visitors/new" element={<ProtectedRoute><VisitorSignIn /></ProtectedRoute>} />
-          <Route path="/cargo" element={<ProtectedRoute><CargoList /></ProtectedRoute>} />
-          <Route path="/cargo/new" element={<ProtectedRoute><CargoEntry /></ProtectedRoute>} />
-          <Route path="/users" element={<ProtectedRoute><UserManagement /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-          <Route path="/fitness" element={<ProtectedRoute><FitnessList /></ProtectedRoute>} />
-          <Route path="/fitness/new" element={<ProtectedRoute><FitnessEntry /></ProtectedRoute>} />
-          <Route path="/fitness/members" element={<ProtectedRoute><MemberManagement /></ProtectedRoute>} />
-        </Routes>
+          <Routes>
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/visitors" element={<ProtectedRoute><VisitorList /></ProtectedRoute>} />
+            <Route path="/visitors/new" element={<ProtectedRoute><VisitorSignIn /></ProtectedRoute>} />
+            <Route path="/cargo" element={<ProtectedRoute><CargoList /></ProtectedRoute>} />
+            <Route path="/cargo/new" element={<ProtectedRoute><CargoEntry /></ProtectedRoute>} />
+            <Route path="/locations" element={<ProtectedRoute><Locations /></ProtectedRoute>} />
+            <Route path="/users" element={<ProtectedRoute><UserManagement /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+            <Route path="/fitness" element={<ProtectedRoute><FitnessList /></ProtectedRoute>} />
+            <Route path="/fitness/new" element={<ProtectedRoute><FitnessEntry /></ProtectedRoute>} />
+            <Route path="/fitness/members" element={<ProtectedRoute><MemberManagement /></ProtectedRoute>} />
+          </Routes>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>

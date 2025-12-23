@@ -31,7 +31,7 @@ const Login = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#F0EEADC',
+            backgroundColor: '#f9fafb',
             padding: '1rem'
         }}>
             <div style={{
@@ -40,13 +40,14 @@ const Login = () => {
                 backgroundColor: 'white',
                 borderRadius: '8px',
                 padding: '2rem',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+
                     <h1 style={{
                         fontSize: '1.875rem',
                         fontWeight: '700',
-                        color: '#576238',
+                        color: '#000000',
                         marginBottom: '0.5rem'
                     }}>Digital Logbook</h1>
                     <p style={{
@@ -74,7 +75,7 @@ const Login = () => {
                             display: 'block',
                             fontSize: '0.875rem',
                             fontWeight: '500',
-                            color: '#576238',
+                            color: '#000000',
                             marginBottom: '0.5rem'
                         }}>Username</label>
                         <input
@@ -96,8 +97,8 @@ const Login = () => {
                             }}
                             onFocus={(e) => {
                                 e.target.style.outline = 'none';
-                                e.target.style.borderColor = '#576238';
-                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                                e.target.style.borderColor = '#000000';
+                                e.target.style.boxShadow = '0 0 0 2px rgba(0, 0, 0, 0.1)';
                             }}
                             onBlur={(e) => {
                                 e.target.style.borderColor = '#e5e7eb';
@@ -111,7 +112,7 @@ const Login = () => {
                             display: 'block',
                             fontSize: '0.875rem',
                             fontWeight: '500',
-                            color: '#576238',
+                            color: '#000000',
                             marginBottom: '0.5rem'
                         }}>Password</label>
                         <input
@@ -132,8 +133,8 @@ const Login = () => {
                             }}
                             onFocus={(e) => {
                                 e.target.style.outline = 'none';
-                                e.target.style.borderColor = '#576238';
-                                e.target.style.boxShadow = '0 0 0 3px rgba(87, 98, 56, 0.1)';
+                                e.target.style.borderColor = '#000000';
+                                e.target.style.boxShadow = '0 0 0 2px rgba(0, 0, 0, 0.1)';
                             }}
                             onBlur={(e) => {
                                 e.target.style.borderColor = '#e5e7eb';
@@ -148,19 +149,19 @@ const Login = () => {
                         style={{
                             width: '100%',
                             padding: '0.75rem',
-                            backgroundColor: '#FFD95D',
-                            color: '#576238',
+                            backgroundColor: '#000000',
+                            color: '#ffffff',
                             border: 'none',
                             borderRadius: '6px',
                             fontSize: '1rem',
                             fontWeight: '600',
                             fontFamily: 'inherit',
                             cursor: loading ? 'not-allowed' : 'pointer',
-                            transition: 'background-color 0.2s',
+                            transition: 'background-color 0.2s, transform 0.1s',
                             opacity: loading ? 0.7 : 1
                         }}
-                        onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = '#e6c54a')}
-                        onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = '#FFD95D')}
+                        onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = '#333333')}
+                        onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = '#000000')}
                     >
                         {loading ? 'Logging in...' : 'Login'}
                     </button>

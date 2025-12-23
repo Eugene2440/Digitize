@@ -16,6 +16,7 @@ type CreateUserRequest struct {
 	Password string          `json:"password" binding:"required,min=6"`
 	Role     models.UserRole `json:"role" binding:"required,oneof=data_entry dashboard_visitor dashboard_cargo admin"`
 	FullName string          `json:"full_name" binding:"required"`
+	LocationID *uint         `json:"location_id"`
 }
 
 type UpdateUserRequest struct {
@@ -23,6 +24,7 @@ type UpdateUserRequest struct {
 	Password string          `json:"password,omitempty"`
 	Role     models.UserRole `json:"role" binding:"required,oneof=data_entry dashboard_visitor dashboard_cargo admin"`
 	FullName string          `json:"full_name"`
+	LocationID *uint         `json:"location_id"`
 }
 
 // CreateUser creates a new user (admin only)
@@ -51,6 +53,7 @@ func CreateUser(c *gin.Context) {
 		PasswordHash: string(hashedPassword),
 		Role:         req.Role,
 		FullName:     req.FullName,
+		LocationID:   req.LocationID,
 	}
 
 	if err := database.DB.CreateUser(user); err != nil {
@@ -126,6 +129,10 @@ func UpdateUser(c *gin.Context) {
 	user.Role = req.Role
 	if req.FullName != "" {
 		user.FullName = req.FullName
+	}
+	
+	if req.LocationID != nil {
+		user.LocationID = req.LocationID
 	}
 
 	if err := database.DB.UpdateUser(user); err != nil {

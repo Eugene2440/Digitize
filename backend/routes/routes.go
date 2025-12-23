@@ -86,5 +86,16 @@ func SetupRoutes(router *gin.Engine) {
 			users.PUT("/:id", handlers.UpdateUser)
 			users.DELETE("/:id", handlers.DeleteUser)
 		}
+
+		// Location management routes (admin only)
+		locations := protected.Group("/locations")
+		locations.Use(middleware.RequireRole(models.RoleAdmin))
+		{
+			locations.GET("", handlers.ListLocations)
+			locations.GET("/:id", handlers.GetLocation)
+			locations.POST("", handlers.CreateLocation)
+			locations.PUT("/:id", handlers.UpdateLocation)
+			locations.DELETE("/:id", handlers.DeleteLocation)
+		}
 	}
 }

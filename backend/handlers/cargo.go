@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"digital-logbook/database"
+	"digital-logbook/middleware"
 	"digital-logbook/models"
 	"net/http"
 	"strconv"
@@ -19,6 +20,7 @@ type CreateCargoRequest struct {
 	DriverName          string               `json:"driver_name" binding:"required"`
 	Company             string               `json:"company" binding:"required"`
 	VehicleRegistration string               `json:"vehicle_registration" binding:"required"`
+	LocationID          uint                 `json:"location_id"`
 }
 
 // CreateCargo creates a new cargo entry (data_entry or admin only)
@@ -27,6 +29,24 @@ func CreateCargo(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	user, err := middleware.GetCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	var locationID uint
+	if user.LocationID != nil {
+		locationID = *user.LocationID
+	} else {
+		if req.LocationID != 0 {
+			locationID = req.LocationID
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Location ID is required for super admin"})
+			return
+		}
 	}
 
 	cargo := &models.Cargo{
@@ -39,6 +59,7 @@ func CreateCargo(c *gin.Context) {
 		Company:             req.Company,
 		VehicleRegistration: req.VehicleRegistration,
 		TimeIn:              time.Now(),
+		LocationID:          locationID,
 	}
 
 	if err := database.DB.CreateCargo(cargo); err != nil {
@@ -51,7 +72,25 @@ func CreateCargo(c *gin.Context) {
 
 // ListCargo returns all cargo with optional filtering
 func ListCargo(c *gin.Context) {
+	user, err := middleware.GetCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
 	filters := make(map[string]interface{})
+
+	// If user is restricted to a location, force that filter
+	if user.LocationID != nil {
+		filters["location_id"] = *user.LocationID
+	} else {
+		// If super admin, allow filtering by location query param
+		if locID := c.Query("location_id"); locID != "" {
+			if id, err := strconv.ParseUint(locID, 10, 32); err == nil {
+				filters["location_id"] = uint(id)
+			}
+		}
+	}
 
 	// Filter by category if provided
 	category := c.Query("category")

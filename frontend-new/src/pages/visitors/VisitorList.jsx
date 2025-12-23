@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { visitorService } from '@/services/visitor.service';
+import { locationService } from '@/services/location.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { InputModal, ConfirmModal } from '@/components/ui/modal';
 import { UserPlus, LogIn, LogOut, Trash2, ChevronUp, ChevronDown, Settings } from 'lucide-react';
@@ -12,6 +13,8 @@ const VisitorList = () => {
     const [visitors, setVisitors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [locations, setLocations] = useState([]);
+    const [locationFilter, setLocationFilter] = useState('');
     const [filter, setFilter] = useState('all');
     const [sortField, setSortField] = useState('sign_in_time');
     const [sortOrder, setSortOrder] = useState('desc');
@@ -25,6 +28,7 @@ const VisitorList = () => {
     const [visibleColumns, setVisibleColumns] = useState({
         name: true,
         id_number: true,
+        location: true,
         area: true,
         purpose: true,
         badge: true,
@@ -35,7 +39,8 @@ const VisitorList = () => {
 
     useEffect(() => {
         fetchVisitors();
-    }, [filter]);
+        fetchLocations();
+    }, [filter, locationFilter]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -56,12 +61,22 @@ const VisitorList = () => {
         setLoading(true);
         try {
             const params = filter !== 'all' ? { status: filter } : {};
+            if (locationFilter) params.location_id = locationFilter;
             const data = await visitorService.getAll(params);
             setVisitors(data);
         } catch (error) {
             console.error('Error fetching visitors:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchLocations = async () => {
+        try {
+            const data = await locationService.getAll();
+            setLocations(data);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
         }
     };
 
@@ -202,6 +217,18 @@ const VisitorList = () => {
                         onChange={(e) => setSearch(e.target.value)}
                         className="search-input"
                     />
+                    {hasRole('admin') && (
+                        <select
+                            className="form-select w-48"
+                            value={locationFilter}
+                            onChange={(e) => setLocationFilter(e.target.value)}
+                        >
+                            <option value="">All Locations</option>
+                            {locations.map(loc => (
+                                <option key={loc.id} value={loc.id}>{loc.name}</option>
+                            ))}
+                        </select>
+                    )}
                     <div className="filter-buttons">
                         <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
                         <button className={`filter-btn ${filter === 'signed_in' ? 'active' : ''}`} onClick={() => setFilter('signed_in')}>Signed In</button>
@@ -236,6 +263,7 @@ const VisitorList = () => {
                                 </th>
                             )}
                             {visibleColumns.id_number && <th className="table-header">ID Number</th>}
+                            {visibleColumns.location && <th className="table-header">Location</th>}
                             {visibleColumns.area && <th className="table-header">Area</th>}
                             {visibleColumns.purpose && <th className="table-header">Purpose</th>}
                             {visibleColumns.badge && <th className="table-header">Badge</th>}
@@ -280,6 +308,15 @@ const VisitorList = () => {
                                     )}
                                     {visibleColumns.name && <td className="table-cell font-medium">{visitor.name}</td>}
                                     {visibleColumns.id_number && <td className="table-cell">{visitor.id_number}</td>}
+                                    {visibleColumns.location && (
+                                        <td className="table-cell">
+                                            {visitor.location ? (
+                                                <span className="text-xs text-gray-500">{visitor.location.name}</span>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">-</span>
+                                            )}
+                                        </td>
+                                    )}
                                     {visibleColumns.area && <td className="table-cell">{visitor.area_of_visit}</td>}
                                     {visibleColumns.purpose && <td className="table-cell">{visitor.purpose}</td>}
                                     {visibleColumns.badge && <td className="table-cell">{visitor.badge_number || '-'}</td>}

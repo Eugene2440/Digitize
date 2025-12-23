@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { visitorService } from '@/services/visitor.service';
 import { formatTimestamp } from '@/utils/dateFormatter';
 import { cargoService } from '@/services/cargo.service';
+import { locationService } from '@/services/location.service';
 import { useAuth } from '@/contexts/AuthContext';
-import { Users, BarChart3, Package } from 'lucide-react';
+import { Users, BarChart3, Package, Filter } from 'lucide-react';
 
 const Dashboard = () => {
     const { user, hasAnyRole } = useAuth();
@@ -13,18 +14,22 @@ const Dashboard = () => {
         totalCargo: 0,
         recentVisitors: []
     });
+    const [locations, setLocations] = useState([]);
+    const [locationFilter, setLocationFilter] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchDashboardData();
-    }, []);
+        fetchLocations();
+    }, [locationFilter]);
 
     const fetchDashboardData = async () => {
         try {
             const today = new Date().toISOString().split('T')[0];
 
             if (hasAnyRole(['dashboard_visitor', 'data_entry', 'admin'])) {
-                const visitors = await visitorService.getAll();
+                const params = locationFilter ? { location_id: locationFilter } : {};
+                const visitors = await visitorService.getAll(params);
                 const activeVisitors = visitors.filter(v => v.status === 'signed_in').length;
                 const todayVisitors = visitors.filter(v =>
                     v.sign_in_time && v.sign_in_time.startsWith(today)
@@ -39,7 +44,8 @@ const Dashboard = () => {
             }
 
             if (hasAnyRole(['dashboard_cargo', 'data_entry', 'admin'])) {
-                const cargo = await cargoService.getAll();
+                const params = locationFilter ? { location_id: locationFilter } : {};
+                const cargo = await cargoService.getAll(params);
                 setStats(prev => ({
                     ...prev,
                     totalCargo: cargo.length
@@ -49,6 +55,15 @@ const Dashboard = () => {
             console.error('Error fetching dashboard data:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchLocations = async () => {
+        try {
+            const data = await locationService.getAll();
+            setLocations(data);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
         }
     };
 
@@ -64,7 +79,24 @@ const Dashboard = () => {
         <div className="space-y-6">
             <div>
                 <h1 className="dashboard-welcome text-2xl md:text-3xl">Welcome, {user?.full_name}!</h1>
-                <p className="dashboard-subtitle">Here's what's happening today</p>
+                <div className="flex justify-between items-center">
+                    <p className="dashboard-subtitle">Here's what's happening today</p>
+                    {user?.role === 'admin' && (
+                        <div className="flex items-center gap-2">
+                            <Filter className="h-4 w-4 text-gray-500" />
+                            <select
+                                className="form-select text-sm py-1 px-2 w-48"
+                                value={locationFilter}
+                                onChange={(e) => setLocationFilter(e.target.value)}
+                            >
+                                <option value="">All Locations</option>
+                                {locations.map(loc => (
+                                    <option key={loc.id} value={loc.id}>{loc.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Stats Grid */}
