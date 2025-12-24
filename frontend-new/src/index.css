@@ -811,8 +811,8 @@ body {
 
 /* Status Badges */
 .status-badge-signed-in {
-  background-color: var(--mustard);
-  color: var(--moss);
+  background-color: #d1fae5;
+  color: #065f46;
   padding: 0.15rem 0.5rem;
   border-radius: 10px;
   font-size: 0.7rem;
@@ -821,8 +821,8 @@ body {
 }
 
 .status-badge-signed-out {
-  background-color: #f3f4f6;
-  color: var(--moss);
+  background-color: #fee2e2;
+  color: #991b1b;
   padding: 0.15rem 0.5rem;
   border-radius: 10px;
   font-size: 0.7rem;

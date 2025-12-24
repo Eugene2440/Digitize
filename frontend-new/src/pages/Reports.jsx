@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { visitorService } from '@/services/visitor.service';
 import { cargoService } from '@/services/cargo.service';
+import { locationService } from '@/services/location.service';
+import { useAuth } from '@/contexts/AuthContext';
 import { FileDown, Calendar } from 'lucide-react';
 
 const Reports = () => {
+    const { hasRole } = useAuth();
     const [period, setPeriod] = useState('daily');
+    const [locations, setLocations] = useState([]);
+    const [locationFilter, setLocationFilter] = useState('');
     const [visitors, setVisitors] = useState([]);
     const [cargo, setCargo] = useState([]);
     const [stats, setStats] = useState({
@@ -17,8 +22,21 @@ const Reports = () => {
     });
 
     useEffect(() => {
+        fetchLocations();
+    }, []);
+
+    useEffect(() => {
         fetchData();
-    }, [period]);
+    }, [period, locationFilter]);
+
+    const fetchLocations = async () => {
+        try {
+            const data = await locationService.getAll();
+            setLocations(data);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -33,8 +51,9 @@ const Reports = () => {
                 startDate = new Date(now.setMonth(now.getMonth() - 1));
             }
 
-            const allVisitors = await visitorService.getAll();
-            const allCargo = await cargoService.getAll();
+            const params = locationFilter ? { location_id: locationFilter } : {};
+            const allVisitors = await visitorService.getAll(params);
+            const allCargo = await cargoService.getAll(params);
 
             const filteredVisitors = allVisitors.filter(v => 
                 new Date(v.sign_in_time) >= startDate
@@ -135,6 +154,18 @@ const Reports = () => {
                     <Calendar className="h-4 w-4" />
                     Monthly
                 </button>
+                {hasRole('admin') && (
+                    <select
+                        className="form-select w-48"
+                        value={locationFilter}
+                        onChange={(e) => setLocationFilter(e.target.value)}
+                    >
+                        <option value="">All Locations</option>
+                        {locations.map(loc => (
+                            <option key={loc.id} value={loc.id}>{loc.name}</option>
+                        ))}
+                    </select>
+                )}
             </div>
 
             <div className="reports-grid">
